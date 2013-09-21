@@ -22,7 +22,11 @@ namespace D3_Classicube_Gui {
         bool running = false;
         int online = 0;
         string lastHeartbeat = "";
-        public bool[] cSettings; // -- 0 = Heartbeat, 1 = Chat, 2 = Command, 3 = Mapsave, 4 = Player login, 5 = LUA Messages
+        int curX = 8;
+        int curY = 3;
+        Dictionary<string, string> cButtons;
+        bool removing = false;
+        public bool[] cSettings; // -- 0 = Heartbeat, 1 = Chat, 2 = Command, 3 = Mapsave, 4 = Player login, 5 = LUA Messages 6 = Timestamps
         #region Server Settings
         string serverName = "";
         string motd = "";
@@ -180,7 +184,7 @@ namespace D3_Classicube_Gui {
                     if (cSettings[0] == true) {
                         putMessage("Heartbeat Sent.");
                     }
-                    lastHeartbeat = DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() + ":" + DateTime.Now.Second.ToString();
+                    lastHeartbeat = DateTime.Now.Hour.ToString().PadLeft(2,'0') + ":" + DateTime.Now.Minute.ToString().PadLeft(2,'0') + ":" + DateTime.Now.Second.ToString().PadLeft(2,'0');
                     lblHeartbeat.Text = "Last Heartbeat: " + lastHeartbeat;
                     if (mini == true) {
                         mf.lblHeartbeat.Text = lastHeartbeat;
@@ -290,10 +294,23 @@ namespace D3_Classicube_Gui {
 
             RegistryControl rc = new RegistryControl();
             byte settings = Convert.ToByte(rc.GetSetting("SH", "D3 GUI", "Console", 62));
-            cSettings = new bool[] { Convert.ToBoolean(settings & 0x1), Convert.ToBoolean(settings & 0x2), Convert.ToBoolean(settings & 0x4), Convert.ToBoolean(settings & 0x8), Convert.ToBoolean(settings & 0x10), Convert.ToBoolean(settings & 0x20) };
-                      
-
+            cSettings = new bool[] { Convert.ToBoolean(settings & 0x1), Convert.ToBoolean(settings & 0x2), Convert.ToBoolean(settings & 0x4), Convert.ToBoolean(settings & 0x8), Convert.ToBoolean(settings & 0x10), Convert.ToBoolean(settings & 0x20), Convert.ToBoolean(settings & 0x40) };
             
+            // -- Custom buttons...
+
+            string buttons = (string)rc.GetSetting("SH", "D3 GUI", "luas", "");
+
+            if (buttons == "")
+                return;
+
+            string[] splits = buttons.Split(new char[] { '|' },StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string c in splits) {
+                string name = c.Substring(0, c.IndexOf(","));
+                string fileName = c.Substring(c.IndexOf(",") + 1, c.Length - (c.IndexOf(",") + 1));
+                addButton(name, fileName);
+            }
+
         }
         public void saveSettings() {
             // -- Save bot settings
@@ -373,6 +390,9 @@ namespace D3_Classicube_Gui {
             filterMessage(args.Data);
         }
         private void putMessage(string message) {
+            if (cSettings[6] == true)
+                message = "[" + DateTime.Now.Hour + ":" + DateTime.Now.Minute.ToString().PadLeft(2, '0') + "]" + message;
+
             boxFiltered.Text += message + Environment.NewLine;
             boxFiltered.Select(boxFiltered.Text.Length, boxFiltered.Text.Length);
             boxFiltered.ScrollToCaret();
@@ -411,5 +431,105 @@ namespace D3_Classicube_Gui {
             }
         }
         #endregion
+
+        private void btnAddLua_Click(object sender, EventArgs e) {
+            string fileName = "";
+            string buttonName = "";
+            DialogResult p = MessageBox.Show("Would you like to create a new script, or run an existing one? Yes for new.", "New LUA", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+            if (p == DialogResult.Cancel)
+                return;
+
+            if (p == DialogResult.Yes) {
+                SaveFileDialog newFile = new SaveFileDialog();
+                newFile.InitialDirectory = serverProc.StartInfo.WorkingDirectory + "\\Lua";
+                newFile.Filter = "Lua Scripts | *.lua";
+                newFile.ShowDialog();
+                fileName = newFile.FileName;
+            }
+            if (p == DialogResult.No) {
+                OpenFileDialog newFile = new OpenFileDialog();
+                newFile.InitialDirectory = serverProc.StartInfo.WorkingDirectory + "\\Lua";
+                newFile.Filter = "Lua Scripts | *.lua";
+                newFile.ShowDialog();
+                fileName = newFile.FileName;
+            }
+            buttonName = Microsoft.VisualBasic.Interaction.InputBox("Please give a name for the custom button", "Adding LUA");
+            DialogResult thisresult = MessageBox.Show("Would you like to edit the file now?", "Lua Add", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (thisresult == DialogResult.Yes) {
+                timedMessages tm = new timedMessages();
+                tm.file = fileName;
+                tm.Show();
+            }
+
+            RegistryControl rc = new RegistryControl();
+            string oldButtons = (string)rc.GetSetting("SH", "D3 GUI", "luas", "");
+
+            oldButtons += buttonName + "," + fileName + "|";
+            rc.SaveSetting("SH", "D3 GUI", "luas", oldButtons);
+
+            addButton(buttonName, fileName);
+        }
+        private void addButton(string name, string file) {
+            if (cButtons == null)
+                cButtons = new Dictionary<string, string>();
+
+            if (cButtons.Keys.Contains(name))
+                return;
+
+            cButtons.Add(name, file); // -- for tracking purposes..
+
+            Button newButton = new Button();
+            newButton.Text = name;
+            newButton.Location = new Point(curX, curY);
+            newButton.Size = new Size(110, 23);
+            newButton.Click += new EventHandler(handleButtons);
+            newButton.Visible = true;
+            newButton.Enabled = true;
+            newButton.BringToFront();
+            this.Controls.Add(newButton);
+            tabPage9.Controls.Add(newButton);
+
+            if (curY == 235) {
+                curY = 3;
+                if (curX == 583) {
+                    MessageBox.Show("That's a lot of LUAS, you've reached the limit!");
+                    return;
+                }
+                curX += 116;
+            } else {
+                curY += 29;
+            }
+        }
+        private void handleButtons(object sender, EventArgs e) {
+            Button clicked = (Button)sender;
+
+            string fileName = "";
+            cButtons.TryGetValue(clicked.Text, out fileName);
+
+            if (fileName == "") {
+                MessageBox.Show("An error has occured.");
+                return;
+            }
+            if (removing == true) {
+                removing = false;
+                RegistryControl rc = new RegistryControl();
+                string oldString = (string)rc.GetSetting("SH", "D3 GUI", "luas", "");
+                oldString = oldString.Replace(clicked.Text + "," + fileName + "|", "");
+                rc.SaveSetting("SH", "D3 GUI", "luas", oldString);
+                this.Controls.Remove(clicked);
+                tabPage9.Controls.Remove(clicked);
+                clicked.Dispose();
+                return;
+            }
+
+            File.SetLastWriteTime(fileName, DateTime.Now);
+        }
+
+        private void btnDelLua_Click(object sender, EventArgs e) {
+            removing = true;
+            MessageBox.Show("Click the button you want to remove.");
+        }
     }
 }

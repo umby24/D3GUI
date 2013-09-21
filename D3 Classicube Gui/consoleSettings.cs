@@ -17,7 +17,7 @@ namespace D3_Classicube_Gui {
         }
 
         private void btnDone_Click(object sender, EventArgs e) {
-            Mainform.cSettings = new bool[] { chkHeartbeat.Checked, chkChat.Checked, chkCommands.Checked, chkMapSave.Checked, chkPlayers.Checked, chkLua.Checked };
+            Mainform.cSettings = new bool[] { chkHeartbeat.Checked, chkChat.Checked, chkCommands.Checked, chkMapSave.Checked, chkPlayers.Checked, chkLua.Checked, chkTimes.Checked };
             Mainform.saveSettings();
             this.Close();
         }

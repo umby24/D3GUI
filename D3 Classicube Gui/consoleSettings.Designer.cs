@@ -31,11 +31,12 @@
             this.chkMapSave = new System.Windows.Forms.CheckBox();
             this.chkPlayers = new System.Windows.Forms.CheckBox();
             this.chkLua = new System.Windows.Forms.CheckBox();
+            this.chkTimes = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnDone
             // 
-            this.btnDone.Location = new System.Drawing.Point(12, 168);
+            this.btnDone.Location = new System.Drawing.Point(12, 173);
             this.btnDone.Name = "btnDone";
             this.btnDone.Size = new System.Drawing.Size(159, 23);
             this.btnDone.TabIndex = 0;
@@ -103,12 +104,23 @@
             this.chkLua.Text = "LUA Errors";
             this.chkLua.UseVisualStyleBackColor = true;
             // 
+            // chkTimes
+            // 
+            this.chkTimes.AutoSize = true;
+            this.chkTimes.Location = new System.Drawing.Point(12, 150);
+            this.chkTimes.Name = "chkTimes";
+            this.chkTimes.Size = new System.Drawing.Size(82, 17);
+            this.chkTimes.TabIndex = 7;
+            this.chkTimes.Text = "Timestamps";
+            this.chkTimes.UseVisualStyleBackColor = true;
+            // 
             // consoleSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(183, 193);
+            this.ClientSize = new System.Drawing.Size(183, 204);
             this.ControlBox = false;
+            this.Controls.Add(this.chkTimes);
             this.Controls.Add(this.chkLua);
             this.Controls.Add(this.chkPlayers);
             this.Controls.Add(this.chkMapSave);
@@ -134,5 +146,6 @@
         public System.Windows.Forms.CheckBox chkMapSave;
         public System.Windows.Forms.CheckBox chkPlayers;
         public System.Windows.Forms.CheckBox chkLua;
+        private System.Windows.Forms.CheckBox chkTimes;
     }
 }

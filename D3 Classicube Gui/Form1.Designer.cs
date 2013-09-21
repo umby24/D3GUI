@@ -66,8 +66,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.boxSName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.tabPage9 = new System.Windows.Forms.TabPage();
+            this.btnAddLua = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label9 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -81,6 +82,7 @@
             this.bShowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDelLua = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl3.SuspendLayout();
@@ -91,6 +93,7 @@
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.tabPage9.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
@@ -99,6 +102,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage9);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -547,9 +551,29 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Server Name:";
             // 
+            // tabPage9
+            // 
+            this.tabPage9.Controls.Add(this.btnDelLua);
+            this.tabPage9.Controls.Add(this.btnAddLua);
+            this.tabPage9.Location = new System.Drawing.Point(4, 22);
+            this.tabPage9.Name = "tabPage9";
+            this.tabPage9.Size = new System.Drawing.Size(769, 287);
+            this.tabPage9.TabIndex = 2;
+            this.tabPage9.Text = "  Custom Luas  ";
+            this.tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // btnAddLua
+            // 
+            this.btnAddLua.Location = new System.Drawing.Point(731, 3);
+            this.btnAddLua.Name = "btnAddLua";
+            this.btnAddLua.Size = new System.Drawing.Size(30, 23);
+            this.btnAddLua.TabIndex = 0;
+            this.btnAddLua.Text = "+";
+            this.btnAddLua.UseVisualStyleBackColor = true;
+            this.btnAddLua.Click += new System.EventHandler(this.btnAddLua_Click);
+            // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.label9);
             this.tabPage2.Controls.Add(this.button1);
             this.tabPage2.Controls.Add(this.label8);
             this.tabPage2.Controls.Add(this.label7);
@@ -560,15 +584,6 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "      About      ";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(231, 246);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(371, 13);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Note: LUA Documentation is for an older server, and thus may be incomplete.";
             // 
             // button1
             // 
@@ -676,6 +691,16 @@
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // btnDelLua
+            // 
+            this.btnDelLua.Location = new System.Drawing.Point(731, 32);
+            this.btnDelLua.Name = "btnDelLua";
+            this.btnDelLua.Size = new System.Drawing.Size(30, 23);
+            this.btnDelLua.TabIndex = 1;
+            this.btnDelLua.Text = "-";
+            this.btnDelLua.UseVisualStyleBackColor = true;
+            this.btnDelLua.Click += new System.EventHandler(this.btnDelLua_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -704,6 +729,7 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.tabPage9.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -767,11 +793,13 @@
         private System.Windows.Forms.Button btnBlockTypes;
         private System.Windows.Forms.Button btnQA;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TabPage tabPage9;
+        private System.Windows.Forms.Button btnAddLua;
+        private System.Windows.Forms.Button btnDelLua;
     }
 }
 
