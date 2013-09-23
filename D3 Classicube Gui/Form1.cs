@@ -176,7 +176,7 @@ namespace D3_Classicube_Gui {
 
             switch (parts[1].Replace(" ", "")) {
                 case "Chat.pbi":
-                    if (parts[2].Replace(" ", "") == "36" && cSettings[1] == true) {
+                    if ((parts[2].Replace(" ", "") == "36"  || parts[2].Replace(" ","") == "75") && cSettings[1] == true) {
                         putMessage(parts[3].Replace(" Chat: ", ""));
                     }
                     break;
