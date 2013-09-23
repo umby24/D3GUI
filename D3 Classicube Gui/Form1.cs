@@ -442,19 +442,33 @@ namespace D3_Classicube_Gui {
 
             if (p == DialogResult.Yes) {
                 SaveFileDialog newFile = new SaveFileDialog();
-                newFile.InitialDirectory = serverProc.StartInfo.WorkingDirectory + "\\Lua";
+                newFile.InitialDirectory = serverProc.StartInfo.WorkingDirectory + "\\Lua\\";
                 newFile.Filter = "Lua Scripts | *.lua";
                 newFile.ShowDialog();
                 fileName = newFile.FileName;
+
+                StreamWriter sNewFile = new StreamWriter(newFile.FileName);
+                sNewFile.Write("");
+                sNewFile.Close();
+
+                if (fileName == "")
+                    return;
             }
             if (p == DialogResult.No) {
                 OpenFileDialog newFile = new OpenFileDialog();
-                newFile.InitialDirectory = serverProc.StartInfo.WorkingDirectory + "\\Lua";
+                newFile.InitialDirectory = serverProc.StartInfo.WorkingDirectory + "\\Lua\\";
                 newFile.Filter = "Lua Scripts | *.lua";
                 newFile.ShowDialog();
                 fileName = newFile.FileName;
+
+                if (fileName == "")
+                    return;
             }
             buttonName = Microsoft.VisualBasic.Interaction.InputBox("Please give a name for the custom button", "Adding LUA");
+
+            if (buttonName == "")
+                return;
+
             DialogResult thisresult = MessageBox.Show("Would you like to edit the file now?", "Lua Add", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (thisresult == DialogResult.Yes) {
