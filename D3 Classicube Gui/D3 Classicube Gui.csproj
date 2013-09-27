@@ -66,6 +66,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Block.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="consoleSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +80,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Map.cs" />
     <Compile Include="miniForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +89,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rank.cs" />
     <Compile Include="RegistryControl.cs" />
     <Compile Include="timedMessages.cs">
       <SubType>Form</SubType>
@@ -110,6 +114,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="timedMessages.resx">
       <DependentUpon>timedMessages.cs</DependentUpon>
@@ -129,6 +134,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="D3.ico" />
+    <None Include="Resources\minecraft color chart.png" />
+    <None Include="Resources\Colors.PNG" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
