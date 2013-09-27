@@ -635,8 +635,10 @@ namespace D3_Classicube_Gui {
                             online += 1;
                         } else {
                             putMessage(name + " logged out.");
-                            lstPlayers.Items.Remove(name);
-                            online -= 1;
+                            if (lstPlayers.Items.Contains(name)) {
+                                lstPlayers.Items.Remove(name);
+                                online -= 1;
+                            }
                         }
                         lblPlayers.Text = "Players: " + online.ToString();
                         if (mini) {
@@ -1587,9 +1589,8 @@ namespace D3_Classicube_Gui {
                 return;
             foreach (Block b in blocks) {
                 if (b.blockName == (string)lstBlock.SelectedItem) {
-                    if (b.overviewColor != "-1") {
+                    if (b.overviewColor != "-1" && chkTransparent.Checked == true) {
                         b.overviewColor = "-1";
-                        chkTransparent.Checked = true;
                     }
                     break;
                 }

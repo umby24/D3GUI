@@ -306,6 +306,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.boxPhysRand);
             this.groupBox1.Controls.Add(this.lblPhysRand);
             this.groupBox1.Controls.Add(this.boxPPlugin);
@@ -447,6 +448,7 @@
             // 
             // btnBRevert
             // 
+            this.btnBRevert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBRevert.Location = new System.Drawing.Point(574, 241);
             this.btnBRevert.Name = "btnBRevert";
             this.btnBRevert.Size = new System.Drawing.Size(187, 23);
@@ -457,6 +459,7 @@
             // 
             // btnBSave
             // 
+            this.btnBSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBSave.Location = new System.Drawing.Point(574, 212);
             this.btnBSave.Name = "btnBSave";
             this.btnBSave.Size = new System.Drawing.Size(187, 23);
@@ -679,6 +682,8 @@
             // 
             // lstBlock
             // 
+            this.lstBlock.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.lstBlock.FormattingEnabled = true;
             this.lstBlock.Location = new System.Drawing.Point(8, 3);
             this.lstBlock.Name = "lstBlock";
@@ -952,6 +957,7 @@
             this.btnMapReloads.Size = new System.Drawing.Size(96, 23);
             this.btnMapReloads.TabIndex = 23;
             this.btnMapReloads.Text = "Reload Maps";
+            this.toolTip1.SetToolTip(this.btnMapReloads, "Reloads the list of maps");
             this.btnMapReloads.UseVisualStyleBackColor = true;
             this.btnMapReloads.Click += new System.EventHandler(this.btnMapReloads_Click);
             // 
@@ -1119,6 +1125,7 @@
             this.btnRenameMap.Size = new System.Drawing.Size(96, 23);
             this.btnRenameMap.TabIndex = 5;
             this.btnRenameMap.Text = "Rename Map";
+            this.toolTip1.SetToolTip(this.btnRenameMap, "Note that the folder name for this map will remain the same.");
             this.btnRenameMap.UseVisualStyleBackColor = true;
             this.btnRenameMap.Click += new System.EventHandler(this.btnRenameMap_Click);
             // 
@@ -1153,11 +1160,14 @@
             this.btnAddMap.Size = new System.Drawing.Size(96, 23);
             this.btnAddMap.TabIndex = 2;
             this.btnAddMap.Text = "Add Map";
+            this.toolTip1.SetToolTip(this.btnAddMap, "Creates a new map, and does a flatgrass fill to it.");
             this.btnAddMap.UseVisualStyleBackColor = true;
             this.btnAddMap.Click += new System.EventHandler(this.btnAddMap_Click);
             // 
             // lstMaps
             // 
+            this.lstMaps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.lstMaps.FormattingEnabled = true;
             this.lstMaps.Location = new System.Drawing.Point(8, 3);
             this.lstMaps.Name = "lstMaps";
@@ -1167,6 +1177,8 @@
             // 
             // picOverview
             // 
+            this.picOverview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.picOverview.Location = new System.Drawing.Point(452, 3);
             this.picOverview.Name = "picOverview";
             this.picOverview.Size = new System.Drawing.Size(309, 261);
