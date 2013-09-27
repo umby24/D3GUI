@@ -212,7 +212,7 @@ namespace D3_Classicube_Gui {
                     SW.WriteLine("Killer = " + b.killer);
                     SW.WriteLine("Special = " + b.special);
                     SW.WriteLine("Color_Overview = " + b.overviewColor);
-                    if (b.RBL != "" || b.RBL != null)
+                    if (b.RBL != "" && b.RBL != null)
                         SW.WriteLine("Replace_By_Load = " + b.RBL);
                     SW.WriteLine("");
                 } else {
@@ -970,6 +970,7 @@ namespace D3_Classicube_Gui {
                         killer = "";
                         special = "";
                         overviewColor = "";
+                        RBL = "";
                     }
                     internalID = line.Substring(1, line.IndexOf("]") - 1);
                 } else if (line.Contains("=")) {

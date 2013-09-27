@@ -924,6 +924,7 @@
             "Island",
             "Normal",
             "Ocean",
+            "Standart",
             "Space",
             "Terrabyte",
             "Tilegen",
