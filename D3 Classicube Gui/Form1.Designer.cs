@@ -177,6 +177,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.lblGen = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -207,7 +208,8 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus,
             this.lblPlayers,
-            this.lblHeartbeat});
+            this.lblHeartbeat,
+            this.lblGen});
             this.statusStrip.Location = new System.Drawing.Point(0, 289);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(777, 24);
@@ -1834,6 +1836,11 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
+            // lblGen
+            // 
+            this.lblGen.Name = "lblGen";
+            this.lblGen.Size = new System.Drawing.Size(0, 19);
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -2041,6 +2048,7 @@
         private System.Windows.Forms.Button btnMapReloads;
         private System.Windows.Forms.ComboBox dropMapGen;
         private System.Windows.Forms.Label lblMapGen;
+        private System.Windows.Forms.ToolStripStatusLabel lblGen;
     }
 }
 

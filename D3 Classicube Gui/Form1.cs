@@ -16,6 +16,7 @@ using C_Minebot;
 namespace D3_Classicube_Gui {
     public partial class Form1 : Form {
         #region Variables
+        D3_ISO_Viewer.D3_Map isoMap;
         Process serverProc;
         bool mini = false;
         miniForm mf;
@@ -147,8 +148,44 @@ namespace D3_Classicube_Gui {
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
             fileWriter.WriteLine("Map_Action_Add_Save(" + thisMap.mapID + ")");
             fileWriter.Close();
+
+            D3_ISO_Viewer.D3_Map mymap = new D3_ISO_Viewer.D3_Map();
+            mymap.readConfig(thisMap.mapDirectory + "\\Config.txt");
+            mymap.loadBlockColors("Data\\Block.txt");
+            mymap.unzip(thisMap.mapDirectory + "\\Data-Layer.gz");
+
+            
+
+            Thread mapGen = new Thread(mymap.generate_Heightmap);
+            mapGen.Start();
+            mapGen.Join(5);
+
+            if ((string)dropOverType.SelectedItem == "ISO") {
+                Thread mgen = new Thread(mymap.generate_iso);
+                mgen.Start();
+            } else if ((string)dropOverType.SelectedItem == "2D") {
+                Thread mgen = new Thread(mymap.generate_2D);
+                mgen.Start();
+            } else {
+                MessageBox.Show("Please select and overview type.");
+                return;
+            }
+            isoMap = mymap;
+            lblGen.Text = "Generating...";
+            Thread wait = new Thread(waiter);
+            wait.Start();
         }
 
+        private void waiter() {
+            while (isoMap.generatedImage == null) {
+                continue;
+            }
+            picOverview.Image = isoMap.generatedImage;
+            lblGen.Text = "Generated in " + isoMap.time2d + isoMap.time3d + "s";
+            isoMap.time2d = "";
+            isoMap.time3d = "";
+            isoMap.generatedImage = null;
+        }
         private void btnMapRez_Click(object sender, EventArgs e) {
             string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a new size for the map", "Map Resize", "64,64,64");
             if (size == "")
@@ -1336,13 +1373,13 @@ namespace D3_Classicube_Gui {
                     else
                         dropOverType.SelectedIndex = 2;
 
-                    FileStream fs = new FileStream(m.mapDirectory + "/Overview.png", FileMode.Open, FileAccess.Read);
-                    MemoryStream ms = new MemoryStream();
-                    fs.CopyTo(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    picOverview.Image = Image.FromStream(ms);
-                    fs.Close();
-                    ms.Close();
+                    //FileStream fs = new FileStream(m.mapDirectory + "/Overview.png", FileMode.Open, FileAccess.Read);
+                    //MemoryStream ms = new MemoryStream();
+                    //fs.CopyTo(ms);
+                    //ms.Seek(0, SeekOrigin.Begin);
+                    //picOverview.Image = Image.FromStream(ms);
+                    //fs.Close();
+                    //ms.Close();
                     //picOverview.Image = Image.FromFile(m.mapDirectory + "/Overview.png");  // -- This kept the file open and caused the saves to fail.
 
                 }

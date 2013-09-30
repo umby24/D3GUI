@@ -74,6 +74,7 @@
     <Compile Include="consoleSettings.Designer.cs">
       <DependentUpon>consoleSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="D3 Map.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
