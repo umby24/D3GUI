@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace D3_Classicube_Gui {
     class Map {
@@ -11,6 +12,7 @@ namespace D3_Classicube_Gui {
         public string mapDirectory;
         public string delete;
         public string reload;
+        public Image preview;
         // -- Once a map is loaded..
         public string mapVersion;
         public string uniqueID;

@@ -17,6 +17,7 @@ namespace D3_Classicube_Gui {
     public partial class Form1 : Form {
         #region Variables
         D3_ISO_Viewer.D3_Map isoMap;
+        Map tempMap;
         Process serverProc;
         bool mini = false;
         miniForm mf;
@@ -158,7 +159,7 @@ namespace D3_Classicube_Gui {
 
             Thread mapGen = new Thread(mymap.generate_Heightmap);
             mapGen.Start();
-            mapGen.Join(5);
+            mapGen.Join(2000);
 
             if ((string)dropOverType.SelectedItem == "ISO") {
                 Thread mgen = new Thread(mymap.generate_iso);
@@ -171,6 +172,7 @@ namespace D3_Classicube_Gui {
                 return;
             }
             isoMap = mymap;
+            tempMap = thisMap;
             lblGen.Text = "Generating...";
             Thread wait = new Thread(waiter);
             wait.Start();
@@ -184,6 +186,7 @@ namespace D3_Classicube_Gui {
             lblGen.Text = "Generated in " + isoMap.time2d + isoMap.time3d + "s";
             isoMap.time2d = "";
             isoMap.time3d = "";
+            tempMap.preview = isoMap.generatedImage;
             isoMap.generatedImage = null;
         }
         private void btnMapRez_Click(object sender, EventArgs e) {
@@ -1373,6 +1376,7 @@ namespace D3_Classicube_Gui {
                     else
                         dropOverType.SelectedIndex = 2;
 
+                    picOverview.Image = m.preview;
                     //FileStream fs = new FileStream(m.mapDirectory + "/Overview.png", FileMode.Open, FileAccess.Read);
                     //MemoryStream ms = new MemoryStream();
                     //fs.CopyTo(ms);
@@ -1887,6 +1891,16 @@ namespace D3_Classicube_Gui {
             }
         }
         #endregion
+
+        private void btnSavePreview_Click(object sender, EventArgs e) {
+            SaveFileDialog sd = new SaveFileDialog();
+            sd.Filter = "PNG Image | *.png";
+            DialogResult dr = sd.ShowDialog();
+
+            if (dr == System.Windows.Forms.DialogResult.OK) 
+                picOverview.Image.Save(sd.FileName);
+            
+        }
 
 
     }

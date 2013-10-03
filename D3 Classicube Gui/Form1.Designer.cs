@@ -29,6 +29,7 @@
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblPlayers = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblHeartbeat = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblGen = new System.Windows.Forms.ToolStripStatusLabel();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.bShowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -177,7 +178,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.lblGen = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnSavePreview = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -235,6 +236,11 @@
             this.lblHeartbeat.Name = "lblHeartbeat";
             this.lblHeartbeat.Size = new System.Drawing.Size(82, 19);
             this.lblHeartbeat.Text = "Last Heatbeat:";
+            // 
+            // lblGen
+            // 
+            this.lblGen.Name = "lblGen";
+            this.lblGen.Size = new System.Drawing.Size(0, 19);
             // 
             // notifyIcon1
             // 
@@ -883,6 +889,7 @@
             // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.btnSavePreview);
             this.tabPage11.Controls.Add(this.dropMapGen);
             this.tabPage11.Controls.Add(this.lblMapGen);
             this.tabPage11.Controls.Add(this.btnMapReloads);
@@ -1836,10 +1843,16 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
-            // lblGen
+            // btnSavePreview
             // 
-            this.lblGen.Name = "lblGen";
-            this.lblGen.Size = new System.Drawing.Size(0, 19);
+            this.btnSavePreview.Location = new System.Drawing.Point(134, 231);
+            this.btnSavePreview.Name = "btnSavePreview";
+            this.btnSavePreview.Size = new System.Drawing.Size(120, 23);
+            this.btnSavePreview.TabIndex = 26;
+            this.btnSavePreview.Text = "Save Preview Image";
+            this.toolTip1.SetToolTip(this.btnSavePreview, "Reloads the list of maps");
+            this.btnSavePreview.UseVisualStyleBackColor = true;
+            this.btnSavePreview.Click += new System.EventHandler(this.btnSavePreview_Click);
             // 
             // Form1
             // 
@@ -2049,6 +2062,7 @@
         private System.Windows.Forms.ComboBox dropMapGen;
         private System.Windows.Forms.Label lblMapGen;
         private System.Windows.Forms.ToolStripStatusLabel lblGen;
+        private System.Windows.Forms.Button btnSavePreview;
     }
 }
 
