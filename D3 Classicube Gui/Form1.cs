@@ -17,6 +17,7 @@ namespace D3_Classicube_Gui {
     public partial class Form1 : Form {
         #region Variables
         D3_ISO_Viewer.D3_Map isoMap;
+        Rank currentRank;
         Map tempMap;
         Process serverProc;
         bool mini = false;
@@ -485,12 +486,16 @@ namespace D3_Classicube_Gui {
         }
 
         private void btnSaveRanks_Click(object sender, EventArgs e) {
+            //blocks = blocks.OrderBy(x => int.Parse(x.internalID)).ToList();
+            ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
             saveRanks();
+            loadRanks();
         }
 
         private void lstRanks_SelectedIndexChanged(object sender, EventArgs e) {
             foreach (Rank f in ranks) {
                 if (f.name == (string)lstRanks.SelectedItem) {
+                    currentRank = f;
                     boxRName.Text = f.name;
                     boxRPrefix.Text = f.prefix;
                     boxRank.Text = f.number;
@@ -499,6 +504,7 @@ namespace D3_Classicube_Gui {
                         chkIsOp.Checked = true;
                     else
                         chkIsOp.Checked = false;
+                    break;
                 }
             }
         }
@@ -1857,38 +1863,28 @@ namespace D3_Classicube_Gui {
         }
 
         private void boxRName_TextChanged(object sender, EventArgs e) {
-            foreach (Rank f in ranks) {
-                if (f.name == (string)lstRanks.SelectedItem) {
-                    f.name = boxRName.Text;
-                }
-            }
+            if (currentRank != null)
+                 currentRank.name = boxRName.Text;
         }
 
         private void boxRPrefix_TextChanged(object sender, EventArgs e) {
-            foreach (Rank f in ranks) {
-                if (f.name == (string)lstRanks.SelectedItem) {
-                    f.prefix = boxRPrefix.Text;
-                }
-            }
+            if (currentRank != null)
+                currentRank.prefix = boxRPrefix.Text;
         }
 
         private void chkIsOp_CheckedChanged(object sender, EventArgs e) {
-            foreach (Rank f in ranks) {
-                if (f.name == (string)lstRanks.SelectedItem) {
+
+                if (currentRank != null) {
                     if (chkIsOp.Checked)
-                        f.onclient = "100";
+                        currentRank.onclient = "100";
                     else
-                        f.onclient = "0";
+                        currentRank.onclient = "0";
                 }
-            }
         }
 
         private void boxRank_TextChanged(object sender, EventArgs e) {
-            foreach (Rank f in ranks) {
-                if (f.name == (string)lstRanks.SelectedItem) {
-                    f.number = boxRank.Text;
-                }
-            }
+            if (currentRank != null)
+                currentRank.number = boxRank.Text;
         }
         #endregion
 
