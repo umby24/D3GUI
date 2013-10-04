@@ -1897,6 +1897,16 @@ namespace D3_Classicube_Gui {
                 picOverview.Image.Save(sd.FileName);
             
         }
+        
+        private void tabPage10_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btnColor_Click(object sender, EventArgs e)
+        {
+            Form2 cs = new Form2();
+            cs.Show();
+        }
 
 
     }
