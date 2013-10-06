@@ -53,7 +53,6 @@ namespace D3_ISO_Viewer {
                
             } while (!fileReader.EndOfStream);
             fileReader.Close();
-            fileReader.Dispose();
         }
         public void unzip(string filename) {
             // -- UnGZips our file, and loads it to memory.
@@ -74,13 +73,9 @@ namespace D3_ISO_Viewer {
                 output.Write(buffer, 0, readbytes);
             }
             mystream.Close();
-            infile.Close();
             mapData = output.ToArray();
             output.Close();
 
-            mystream.Dispose();
-            infile.Dispose();
-            output.Dispose();
         }
         public int getBlockID(int x, int y, int z) {
             if ((x >= 0 && y >= 0 && z >= 0) && (Size_X > x && Size_Y > y && Size_Z > z)) {

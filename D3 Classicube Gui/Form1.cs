@@ -1339,6 +1339,11 @@ namespace D3_Classicube_Gui {
             serverProc = new Process();
             serverProc.StartInfo = psi;
             serverProc.OutputDataReceived += new DataReceivedEventHandler(handleMessage);
+
+            // -- Check for updates
+            Updater ud = new Updater();
+            ud.mainForm = this;
+            ud.checkUpdates();
         }
         private void Form1_Closing(object sender, FormClosingEventArgs e) {
             try {

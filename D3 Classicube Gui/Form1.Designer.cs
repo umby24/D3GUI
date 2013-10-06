@@ -93,6 +93,7 @@
             this.boxCommand = new System.Windows.Forms.TextBox();
             this.lstCmd = new System.Windows.Forms.ListBox();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.btnSavePreview = new System.Windows.Forms.Button();
             this.dropMapGen = new System.Windows.Forms.ComboBox();
             this.lblMapGen = new System.Windows.Forms.Label();
             this.btnMapReloads = new System.Windows.Forms.Button();
@@ -178,7 +179,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.btnSavePreview = new System.Windows.Forms.Button();
+            this.updateProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -210,7 +211,8 @@
             this.lblStatus,
             this.lblPlayers,
             this.lblHeartbeat,
-            this.lblGen});
+            this.lblGen,
+            this.updateProgress});
             this.statusStrip.Location = new System.Drawing.Point(0, 289);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(777, 24);
@@ -920,6 +922,17 @@
             this.tabPage11.TabIndex = 4;
             this.tabPage11.Text = "Worlds";
             this.tabPage11.UseVisualStyleBackColor = true;
+            // 
+            // btnSavePreview
+            // 
+            this.btnSavePreview.Location = new System.Drawing.Point(134, 231);
+            this.btnSavePreview.Name = "btnSavePreview";
+            this.btnSavePreview.Size = new System.Drawing.Size(120, 23);
+            this.btnSavePreview.TabIndex = 26;
+            this.btnSavePreview.Text = "Save Preview Image";
+            this.toolTip1.SetToolTip(this.btnSavePreview, "Reloads the list of maps");
+            this.btnSavePreview.UseVisualStyleBackColor = true;
+            this.btnSavePreview.Click += new System.EventHandler(this.btnSavePreview_Click);
             // 
             // dropMapGen
             // 
@@ -1843,16 +1856,11 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
-            // btnSavePreview
+            // updateProgress
             // 
-            this.btnSavePreview.Location = new System.Drawing.Point(134, 231);
-            this.btnSavePreview.Name = "btnSavePreview";
-            this.btnSavePreview.Size = new System.Drawing.Size(120, 23);
-            this.btnSavePreview.TabIndex = 26;
-            this.btnSavePreview.Text = "Save Preview Image";
-            this.toolTip1.SetToolTip(this.btnSavePreview, "Reloads the list of maps");
-            this.btnSavePreview.UseVisualStyleBackColor = true;
-            this.btnSavePreview.Click += new System.EventHandler(this.btnSavePreview_Click);
+            this.updateProgress.Name = "updateProgress";
+            this.updateProgress.Size = new System.Drawing.Size(100, 18);
+            this.updateProgress.Visible = false;
             // 
             // Form1
             // 
@@ -2063,6 +2071,7 @@
         private System.Windows.Forms.Label lblMapGen;
         private System.Windows.Forms.ToolStripStatusLabel lblGen;
         private System.Windows.Forms.Button btnSavePreview;
+        public System.Windows.Forms.ToolStripProgressBar updateProgress;
     }
 }
 

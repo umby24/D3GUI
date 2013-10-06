@@ -98,6 +98,7 @@
     <Compile Include="timedMessages.Designer.cs">
       <DependentUpon>timedMessages.cs</DependentUpon>
     </Compile>
+    <Compile Include="Updater.cs" />
     <EmbeddedResource Include="consoleSettings.resx">
       <DependentUpon>consoleSettings.cs</DependentUpon>
     </EmbeddedResource>
