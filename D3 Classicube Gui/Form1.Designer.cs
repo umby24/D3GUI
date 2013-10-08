@@ -30,6 +30,7 @@
             this.lblPlayers = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblHeartbeat = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblGen = new System.Windows.Forms.ToolStripStatusLabel();
+            this.updateProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.bShowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -179,7 +180,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.updateProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.lblMapSize = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -243,6 +244,12 @@
             // 
             this.lblGen.Name = "lblGen";
             this.lblGen.Size = new System.Drawing.Size(0, 19);
+            // 
+            // updateProgress
+            // 
+            this.updateProgress.Name = "updateProgress";
+            this.updateProgress.Size = new System.Drawing.Size(100, 18);
+            this.updateProgress.Visible = false;
             // 
             // notifyIcon1
             // 
@@ -891,6 +898,7 @@
             // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.lblMapSize);
             this.tabPage11.Controls.Add(this.btnSavePreview);
             this.tabPage11.Controls.Add(this.dropMapGen);
             this.tabPage11.Controls.Add(this.lblMapGen);
@@ -1123,7 +1131,7 @@
             this.btnRegenPrev.Name = "btnRegenPrev";
             this.btnRegenPrev.Size = new System.Drawing.Size(96, 23);
             this.btnRegenPrev.TabIndex = 8;
-            this.btnRegenPrev.Text = "Regen Preview";
+            this.btnRegenPrev.Text = "(Re)gen Preview";
             this.toolTip1.SetToolTip(this.btnRegenPrev, "This also saves the map");
             this.btnRegenPrev.UseVisualStyleBackColor = true;
             this.btnRegenPrev.Click += new System.EventHandler(this.btnRegenPrev_Click);
@@ -1856,11 +1864,14 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
-            // updateProgress
+            // lblMapSize
             // 
-            this.updateProgress.Name = "updateProgress";
-            this.updateProgress.Size = new System.Drawing.Size(100, 18);
-            this.updateProgress.Visible = false;
+            this.lblMapSize.AutoSize = true;
+            this.lblMapSize.Location = new System.Drawing.Point(270, 241);
+            this.lblMapSize.Name = "lblMapSize";
+            this.lblMapSize.Size = new System.Drawing.Size(54, 13);
+            this.lblMapSize.TabIndex = 27;
+            this.lblMapSize.Text = "Map Size:";
             // 
             // Form1
             // 
@@ -2072,6 +2083,7 @@
         private System.Windows.Forms.ToolStripStatusLabel lblGen;
         private System.Windows.Forms.Button btnSavePreview;
         public System.Windows.Forms.ToolStripProgressBar updateProgress;
+        private System.Windows.Forms.Label lblMapSize;
     }
 }
 

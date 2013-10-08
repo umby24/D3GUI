@@ -443,7 +443,7 @@ namespace D3_Classicube_Gui {
                 fileName = newFile.FileName;
 
                 StreamWriter sNewFile = new StreamWriter(newFile.FileName);
-                sNewFile.Write("");
+                sNewFile.Write(" ");
                 sNewFile.Close();
 
                 if (fileName == "")
@@ -1387,6 +1387,7 @@ namespace D3_Classicube_Gui {
                     else
                         dropOverType.SelectedIndex = 2;
 
+                    lblMapSize.Text = "Map Size: " + m.size_x + "x" + m.size_y + "x" + m.size_z;
                     picOverview.Image = m.preview;
                     //FileStream fs = new FileStream(m.mapDirectory + "/Overview.png", FileMode.Open, FileAccess.Read);
                     //MemoryStream ms = new MemoryStream();
@@ -1474,6 +1475,9 @@ namespace D3_Classicube_Gui {
                 thisMap.physics = "0";
             }
             saveMapSettings(thisMap);
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Load(" + thisMap.mapID + ", " + thisMap.mapName + ")");
+            fileWriter.Close();
         }
 
         private void numInterval_ValueChanged(object sender, EventArgs e) {
@@ -1486,6 +1490,10 @@ namespace D3_Classicube_Gui {
             }
             thisMap.saveInt = Convert.ToInt32(numInterval.Value).ToString();
             saveMapSettings(thisMap);
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Load(" + thisMap.mapID + ", " + thisMap.mapName + ")");
+            fileWriter.Close();
         }
         private void dropRepPhys_SelectedIndexChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
@@ -1498,6 +1506,7 @@ namespace D3_Classicube_Gui {
                         b.doRepeat = "0";
                 }
             }
+
         }
 
         private void pictureBox2_Click(object sender, EventArgs e) {
