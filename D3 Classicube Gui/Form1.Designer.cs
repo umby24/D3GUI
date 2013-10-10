@@ -94,6 +94,7 @@
             this.boxCommand = new System.Windows.Forms.TextBox();
             this.lstCmd = new System.Windows.Forms.ListBox();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.lblMapSize = new System.Windows.Forms.Label();
             this.btnSavePreview = new System.Windows.Forms.Button();
             this.dropMapGen = new System.Windows.Forms.ComboBox();
             this.lblMapGen = new System.Windows.Forms.Label();
@@ -180,7 +181,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.lblMapSize = new System.Windows.Forms.Label();
+            this.lblSuffix = new System.Windows.Forms.Label();
+            this.boxRSuffix = new System.Windows.Forms.TextBox();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -349,6 +351,7 @@
             this.boxPhysRand.Name = "boxPhysRand";
             this.boxPhysRand.Size = new System.Drawing.Size(137, 20);
             this.boxPhysRand.TabIndex = 47;
+            this.toolTip1.SetToolTip(this.boxPhysRand, "A random time added to the physics delay");
             this.boxPhysRand.TextChanged += new System.EventHandler(this.boxPhysRand_TextChanged);
             // 
             // lblPhysRand
@@ -366,6 +369,7 @@
             this.boxPPlugin.Name = "boxPPlugin";
             this.boxPPlugin.Size = new System.Drawing.Size(137, 20);
             this.boxPPlugin.TabIndex = 45;
+            this.toolTip1.SetToolTip(this.boxPPlugin, "The Lua plugin for handling this block\'s physics.");
             this.boxPPlugin.TextChanged += new System.EventHandler(this.boxPPlugin_TextChanged);
             // 
             // lblPhysPlug
@@ -406,6 +410,7 @@
             this.dropRepPhys.Name = "dropRepPhys";
             this.dropRepPhys.Size = new System.Drawing.Size(137, 21);
             this.dropRepPhys.TabIndex = 42;
+            this.toolTip1.SetToolTip(this.dropRepPhys, "Will physics be applied multiple times to the block?");
             this.dropRepPhys.SelectedIndexChanged += new System.EventHandler(this.dropRepPhys_SelectedIndexChanged);
             // 
             // dropMaploadPhys
@@ -419,6 +424,7 @@
             this.dropMaploadPhys.Name = "dropMaploadPhys";
             this.dropMaploadPhys.Size = new System.Drawing.Size(83, 21);
             this.dropMaploadPhys.TabIndex = 43;
+            this.toolTip1.SetToolTip(this.dropMaploadPhys, "After /mapload, is the block allowed to process physics right away?");
             this.dropMaploadPhys.SelectedIndexChanged += new System.EventHandler(this.dropMaploadPhys_SelectedIndexChanged);
             // 
             // boxPDelay
@@ -427,6 +433,7 @@
             this.boxPDelay.Name = "boxPDelay";
             this.boxPDelay.Size = new System.Drawing.Size(137, 20);
             this.boxPDelay.TabIndex = 41;
+            this.toolTip1.SetToolTip(this.boxPDelay, "The time in ms between each physics tick for this block");
             this.boxPDelay.TextChanged += new System.EventHandler(this.boxPDelay_TextChanged);
             // 
             // lblMapPhys
@@ -452,6 +459,7 @@
             this.dropPhysics.Name = "dropPhysics";
             this.dropPhysics.Size = new System.Drawing.Size(137, 21);
             this.dropPhysics.TabIndex = 34;
+            this.toolTip1.SetToolTip(this.dropPhysics, "What kind of built in physics is applied to this block?");
             this.dropPhysics.SelectedIndexChanged += new System.EventHandler(this.dropPhysics_SelectedIndexChanged);
             // 
             // lblPhysics
@@ -471,6 +479,7 @@
             this.btnBRevert.Size = new System.Drawing.Size(187, 23);
             this.btnBRevert.TabIndex = 49;
             this.btnBRevert.Text = "Revert";
+            this.toolTip1.SetToolTip(this.btnBRevert, "Revert to the on-disk version of the blocks file.");
             this.btnBRevert.UseVisualStyleBackColor = true;
             this.btnBRevert.Click += new System.EventHandler(this.btnBRevert_Click);
             // 
@@ -482,6 +491,7 @@
             this.btnBSave.Size = new System.Drawing.Size(187, 23);
             this.btnBSave.TabIndex = 48;
             this.btnBSave.Text = "Save";
+            this.toolTip1.SetToolTip(this.btnBSave, "Save all blocks to the server and reload them.");
             this.btnBSave.UseVisualStyleBackColor = true;
             this.btnBSave.Click += new System.EventHandler(this.btnBSave_Click);
             // 
@@ -503,6 +513,7 @@
             this.picOColor.Size = new System.Drawing.Size(20, 20);
             this.picOColor.TabIndex = 46;
             this.picOColor.TabStop = false;
+            this.toolTip1.SetToolTip(this.picOColor, "The color of the block in map previews");
             this.picOColor.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // lblOColor
@@ -584,6 +595,7 @@
             this.boxBID.Name = "boxBID";
             this.boxBID.Size = new System.Drawing.Size(137, 20);
             this.boxBID.TabIndex = 33;
+            this.toolTip1.SetToolTip(this.boxBID, "The block ID that is sent to the client");
             this.boxBID.TextChanged += new System.EventHandler(this.boxBID_TextChanged);
             // 
             // boxBName
@@ -592,6 +604,7 @@
             this.boxBName.Name = "boxBName";
             this.boxBName.Size = new System.Drawing.Size(137, 20);
             this.boxBName.TabIndex = 32;
+            this.toolTip1.SetToolTip(this.boxBName, "The name of the block");
             this.boxBName.TextChanged += new System.EventHandler(this.boxBName_TextChanged);
             // 
             // lblSpec
@@ -683,6 +696,7 @@
             this.btnRemBlock.Size = new System.Drawing.Size(59, 23);
             this.btnRemBlock.TabIndex = 18;
             this.btnRemBlock.Text = "-";
+            this.toolTip1.SetToolTip(this.btnRemBlock, "Delete the currently selected block");
             this.btnRemBlock.UseVisualStyleBackColor = true;
             this.btnRemBlock.Click += new System.EventHandler(this.btnRemBlock_Click);
             // 
@@ -694,6 +708,7 @@
             this.btnAddBlock.Size = new System.Drawing.Size(63, 23);
             this.btnAddBlock.TabIndex = 17;
             this.btnAddBlock.Text = "+";
+            this.toolTip1.SetToolTip(this.btnAddBlock, "Create a new block");
             this.btnAddBlock.UseVisualStyleBackColor = true;
             this.btnAddBlock.Click += new System.EventHandler(this.btnAddBlock_Click);
             // 
@@ -742,6 +757,7 @@
             this.btnRemCom.Size = new System.Drawing.Size(59, 23);
             this.btnRemCom.TabIndex = 16;
             this.btnRemCom.Text = "-";
+            this.toolTip1.SetToolTip(this.btnRemCom, "Remove the currently selected command.");
             this.btnRemCom.UseVisualStyleBackColor = true;
             this.btnRemCom.Click += new System.EventHandler(this.btnRemCom_Click);
             // 
@@ -753,6 +769,7 @@
             this.btnAddCom.Size = new System.Drawing.Size(63, 23);
             this.btnAddCom.TabIndex = 15;
             this.btnAddCom.Text = "+";
+            this.toolTip1.SetToolTip(this.btnAddCom, "Add a new command");
             this.btnAddCom.UseVisualStyleBackColor = true;
             this.btnAddCom.Click += new System.EventHandler(this.btnAddCom_Click);
             // 
@@ -763,6 +780,7 @@
             this.btnCRevert.Size = new System.Drawing.Size(158, 23);
             this.btnCRevert.TabIndex = 14;
             this.btnCRevert.Text = "Revert";
+            this.toolTip1.SetToolTip(this.btnCRevert, "Loads the commands file from disk");
             this.btnCRevert.UseVisualStyleBackColor = true;
             this.btnCRevert.Click += new System.EventHandler(this.btnCRevert_Click);
             // 
@@ -773,6 +791,7 @@
             this.btnCSave.Size = new System.Drawing.Size(158, 23);
             this.btnCSave.TabIndex = 13;
             this.btnCSave.Text = "Save";
+            this.toolTip1.SetToolTip(this.btnCSave, "Saves the commands to file (Causes server to reload the file)");
             this.btnCSave.UseVisualStyleBackColor = true;
             this.btnCSave.Click += new System.EventHandler(this.btnCSave_Click);
             // 
@@ -931,6 +950,15 @@
             this.tabPage11.Text = "Worlds";
             this.tabPage11.UseVisualStyleBackColor = true;
             // 
+            // lblMapSize
+            // 
+            this.lblMapSize.AutoSize = true;
+            this.lblMapSize.Location = new System.Drawing.Point(270, 241);
+            this.lblMapSize.Name = "lblMapSize";
+            this.lblMapSize.Size = new System.Drawing.Size(54, 13);
+            this.lblMapSize.TabIndex = 27;
+            this.lblMapSize.Text = "Map Size:";
+            // 
             // btnSavePreview
             // 
             this.btnSavePreview.Location = new System.Drawing.Point(134, 231);
@@ -938,7 +966,7 @@
             this.btnSavePreview.Size = new System.Drawing.Size(120, 23);
             this.btnSavePreview.TabIndex = 26;
             this.btnSavePreview.Text = "Save Preview Image";
-            this.toolTip1.SetToolTip(this.btnSavePreview, "Reloads the list of maps");
+            this.toolTip1.SetToolTip(this.btnSavePreview, "Saves the preview image shown to the right.");
             this.btnSavePreview.UseVisualStyleBackColor = true;
             this.btnSavePreview.Click += new System.EventHandler(this.btnSavePreview_Click);
             // 
@@ -1041,6 +1069,7 @@
             this.boxVisrank.Name = "boxVisrank";
             this.boxVisrank.Size = new System.Drawing.Size(100, 20);
             this.boxVisrank.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.boxVisrank, "The rank at which this map is visible on /maps");
             this.boxVisrank.TextChanged += new System.EventHandler(this.boxVisrank_TextChanged);
             // 
             // boxJoinRank
@@ -1049,6 +1078,7 @@
             this.boxJoinRank.Name = "boxJoinRank";
             this.boxJoinRank.Size = new System.Drawing.Size(100, 20);
             this.boxJoinRank.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.boxJoinRank, "The minimum rank at which someone can join this map");
             this.boxJoinRank.TextChanged += new System.EventHandler(this.boxJoinRank_TextChanged);
             // 
             // boxBuildRank
@@ -1057,6 +1087,7 @@
             this.boxBuildRank.Name = "boxBuildRank";
             this.boxBuildRank.Size = new System.Drawing.Size(100, 20);
             this.boxBuildRank.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.boxBuildRank, "The minimum rank at which someone can build on this map");
             this.boxBuildRank.TextChanged += new System.EventHandler(this.boxBuildRank_TextChanged);
             // 
             // lblOvertype
@@ -1121,6 +1152,7 @@
             this.btnMapRez.Size = new System.Drawing.Size(96, 23);
             this.btnMapRez.TabIndex = 9;
             this.btnMapRez.Text = "Resize Map";
+            this.toolTip1.SetToolTip(this.btnMapRez, "Calls the server to resize the selected map.");
             this.btnMapRez.UseVisualStyleBackColor = true;
             this.btnMapRez.Click += new System.EventHandler(this.btnMapRez_Click);
             // 
@@ -1144,6 +1176,7 @@
             this.btnRegenMap.Size = new System.Drawing.Size(96, 23);
             this.btnRegenMap.TabIndex = 7;
             this.btnRegenMap.Text = "Regenerate Map";
+            this.toolTip1.SetToolTip(this.btnRegenMap, "Calls the server to regenerate the map. Standart = flatgrass");
             this.btnRegenMap.UseVisualStyleBackColor = true;
             this.btnRegenMap.Click += new System.EventHandler(this.btnRegenMap_Click);
             // 
@@ -1218,6 +1251,8 @@
             // 
             // tabPage10
             // 
+            this.tabPage10.Controls.Add(this.boxRSuffix);
+            this.tabPage10.Controls.Add(this.lblSuffix);
             this.tabPage10.Controls.Add(this.btnRevert);
             this.tabPage10.Controls.Add(this.pictureBox1);
             this.tabPage10.Controls.Add(this.boxRank);
@@ -1240,11 +1275,12 @@
             // 
             // btnRevert
             // 
-            this.btnRevert.Location = new System.Drawing.Point(139, 133);
+            this.btnRevert.Location = new System.Drawing.Point(138, 156);
             this.btnRevert.Name = "btnRevert";
             this.btnRevert.Size = new System.Drawing.Size(138, 23);
             this.btnRevert.TabIndex = 12;
             this.btnRevert.Text = "Revert";
+            this.toolTip1.SetToolTip(this.btnRevert, "Revert all changes to the ranks file on disk");
             this.btnRevert.UseVisualStyleBackColor = true;
             this.btnRevert.Click += new System.EventHandler(this.btnRevert_Click);
             // 
@@ -1266,6 +1302,7 @@
             this.boxRank.Name = "boxRank";
             this.boxRank.Size = new System.Drawing.Size(100, 20);
             this.boxRank.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.boxRank, "The actual numerical value for the rank");
             this.boxRank.TextChanged += new System.EventHandler(this.boxRank_TextChanged);
             // 
             // lblRank
@@ -1280,11 +1317,12 @@
             // chkIsOp
             // 
             this.chkIsOp.AutoSize = true;
-            this.chkIsOp.Location = new System.Drawing.Point(177, 81);
+            this.chkIsOp.Location = new System.Drawing.Point(175, 104);
             this.chkIsOp.Name = "chkIsOp";
             this.chkIsOp.Size = new System.Drawing.Size(101, 17);
             this.chkIsOp.TabIndex = 8;
             this.chkIsOp.Text = "Is Operator (Op)";
+            this.toolTip1.SetToolTip(this.chkIsOp, "If checked, this rank will be concidered \'Op\' (allows use of +ophax)");
             this.chkIsOp.UseVisualStyleBackColor = true;
             this.chkIsOp.CheckedChanged += new System.EventHandler(this.chkIsOp_CheckedChanged);
             // 
@@ -1321,15 +1359,17 @@
             this.boxRName.Name = "boxRName";
             this.boxRName.Size = new System.Drawing.Size(100, 20);
             this.boxRName.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.boxRName, "The name of the rank");
             this.boxRName.TextChanged += new System.EventHandler(this.boxRName_TextChanged);
             // 
             // btnSaveRanks
             // 
-            this.btnSaveRanks.Location = new System.Drawing.Point(139, 104);
+            this.btnSaveRanks.Location = new System.Drawing.Point(139, 127);
             this.btnSaveRanks.Name = "btnSaveRanks";
             this.btnSaveRanks.Size = new System.Drawing.Size(138, 23);
             this.btnSaveRanks.TabIndex = 3;
             this.btnSaveRanks.Text = "Save";
+            this.toolTip1.SetToolTip(this.btnSaveRanks, "Save the ranks file");
             this.btnSaveRanks.UseVisualStyleBackColor = true;
             this.btnSaveRanks.Click += new System.EventHandler(this.btnSaveRanks_Click);
             // 
@@ -1341,6 +1381,7 @@
             this.btnRemRank.Size = new System.Drawing.Size(55, 23);
             this.btnRemRank.TabIndex = 2;
             this.btnRemRank.Text = "-";
+            this.toolTip1.SetToolTip(this.btnRemRank, "Remove the currently selected rank");
             this.btnRemRank.UseVisualStyleBackColor = true;
             this.btnRemRank.Click += new System.EventHandler(this.btnRemRank_Click);
             // 
@@ -1352,6 +1393,7 @@
             this.btnAddRank.Size = new System.Drawing.Size(59, 23);
             this.btnAddRank.TabIndex = 1;
             this.btnAddRank.Text = "+";
+            this.toolTip1.SetToolTip(this.btnAddRank, "Add a new rank");
             this.btnAddRank.UseVisualStyleBackColor = true;
             this.btnAddRank.Click += new System.EventHandler(this.btnAddRank_Click);
             // 
@@ -1395,10 +1437,10 @@
             this.lblInfo.AutoSize = true;
             this.lblInfo.Location = new System.Drawing.Point(8, 73);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(177, 52);
+            this.lblInfo.Size = new System.Drawing.Size(177, 78);
             this.lblInfo.TabIndex = 5;
             this.lblInfo.Text = "Server Software by: Dadido3\r\n\r\nServer software written in PureBasic\r\nGUI written " +
-    "in C#";
+    "in C#\r\n\r\nv1.0.4";
             // 
             // lblUmby
             // 
@@ -1586,6 +1628,7 @@
             this.btnUndo.Size = new System.Drawing.Size(138, 23);
             this.btnUndo.TabIndex = 4;
             this.btnUndo.Text = "Edit Undo Steps";
+            this.toolTip1.SetToolTip(this.btnUndo, "Sets the maximum number of steps back the server will remember for /undo");
             this.btnUndo.UseVisualStyleBackColor = true;
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
@@ -1596,6 +1639,7 @@
             this.btnQA.Size = new System.Drawing.Size(138, 23);
             this.btnQA.TabIndex = 0;
             this.btnQA.Text = "Change QA commands";
+            this.toolTip1.SetToolTip(this.btnQA, "These are commands like /rules, /faq, and you can add more.");
             this.btnQA.UseVisualStyleBackColor = true;
             this.btnQA.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -1637,6 +1681,7 @@
             this.btnTray.Size = new System.Drawing.Size(211, 23);
             this.btnTray.TabIndex = 6;
             this.btnTray.Text = "Minimize to Tray";
+            this.toolTip1.SetToolTip(this.btnTray, "Minimize to the system tray");
             this.btnTray.UseVisualStyleBackColor = true;
             this.btnTray.Click += new System.EventHandler(this.btnTray_Click);
             // 
@@ -1649,6 +1694,7 @@
             this.btnMini.Size = new System.Drawing.Size(211, 23);
             this.btnMini.TabIndex = 5;
             this.btnMini.Text = "Mini Mode";
+            this.toolTip1.SetToolTip(this.btnMini, "Turn the GUI into a smaller form.");
             this.btnMini.UseVisualStyleBackColor = true;
             this.btnMini.Click += new System.EventHandler(this.btnMini_Click);
             // 
@@ -1661,6 +1707,7 @@
             this.btnFilter.Size = new System.Drawing.Size(211, 23);
             this.btnFilter.TabIndex = 4;
             this.btnFilter.Text = "Filtered Console Settings";
+            this.toolTip1.SetToolTip(this.btnFilter, "Edit the settings for the filtered console.");
             this.btnFilter.UseVisualStyleBackColor = true;
             this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
@@ -1673,6 +1720,7 @@
             this.btnTimed.Size = new System.Drawing.Size(211, 23);
             this.btnTimed.TabIndex = 3;
             this.btnTimed.Text = "Manage Timed Messages";
+            this.toolTip1.SetToolTip(this.btnTimed, "Each new line = a new timed message");
             this.btnTimed.UseVisualStyleBackColor = true;
             this.btnTimed.Click += new System.EventHandler(this.btnTimed_Click);
             // 
@@ -1685,6 +1733,7 @@
             this.btnLua.Size = new System.Drawing.Size(211, 23);
             this.btnLua.TabIndex = 2;
             this.btnLua.Text = "Run Lua Command";
+            this.toolTip1.SetToolTip(this.btnLua, "Allows you to enter and run a lua command.");
             this.btnLua.UseVisualStyleBackColor = true;
             this.btnLua.Click += new System.EventHandler(this.btnLua_Click);
             // 
@@ -1698,6 +1747,7 @@
             this.btnStop.Size = new System.Drawing.Size(211, 23);
             this.btnStop.TabIndex = 1;
             this.btnStop.Text = "Stop Server";
+            this.toolTip1.SetToolTip(this.btnStop, "Stops the D3 Server");
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
@@ -1710,6 +1760,7 @@
             this.btnStart.Size = new System.Drawing.Size(211, 23);
             this.btnStart.TabIndex = 0;
             this.btnStart.Text = "Start Server";
+            this.toolTip1.SetToolTip(this.btnStart, "Starts the D3 Server");
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
@@ -1743,6 +1794,7 @@
             this.btnSave.Size = new System.Drawing.Size(205, 23);
             this.btnSave.TabIndex = 13;
             this.btnSave.Text = "Save";
+            this.toolTip1.SetToolTip(this.btnSave, "Saves the above settings.");
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -1754,6 +1806,7 @@
             this.chkNameVerif.Size = new System.Drawing.Size(109, 17);
             this.chkNameVerif.TabIndex = 12;
             this.chkNameVerif.Text = "Name Verification";
+            this.toolTip1.SetToolTip(this.chkNameVerif, "Ensures no one can steal names.");
             this.chkNameVerif.UseVisualStyleBackColor = true;
             // 
             // chkPub
@@ -1764,6 +1817,7 @@
             this.chkPub.Size = new System.Drawing.Size(89, 17);
             this.chkPub.TabIndex = 11;
             this.chkPub.Text = "Public Server";
+            this.toolTip1.SetToolTip(this.chkPub, "Checked = Show server in server list.");
             this.chkPub.UseVisualStyleBackColor = true;
             // 
             // boxPort
@@ -1773,6 +1827,7 @@
             this.boxPort.Name = "boxPort";
             this.boxPort.Size = new System.Drawing.Size(67, 20);
             this.boxPort.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.boxPort, "The port the server will listen on.");
             // 
             // boxMax
             // 
@@ -1781,6 +1836,7 @@
             this.boxMax.Name = "boxMax";
             this.boxMax.Size = new System.Drawing.Size(67, 20);
             this.boxMax.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.boxMax, "Maximum players");
             // 
             // lblPort
             // 
@@ -1806,6 +1862,7 @@
             this.boxLogin.Name = "boxLogin";
             this.boxLogin.Size = new System.Drawing.Size(199, 20);
             this.boxLogin.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.boxLogin, "The message all players receive when logging in.");
             // 
             // lblLoginMsg
             // 
@@ -1822,6 +1879,7 @@
             this.boxMOTD.Name = "boxMOTD";
             this.boxMOTD.Size = new System.Drawing.Size(199, 20);
             this.boxMOTD.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.boxMOTD, "The default MOTD used when logging in or changing maps");
             // 
             // lblMotd
             // 
@@ -1838,6 +1896,7 @@
             this.boxSName.Name = "boxSName";
             this.boxSName.Size = new System.Drawing.Size(199, 20);
             this.boxSName.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.boxSName, "The server name as shown in the server list");
             // 
             // lblSName
             // 
@@ -1864,14 +1923,23 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
-            // lblMapSize
+            // lblSuffix
             // 
-            this.lblMapSize.AutoSize = true;
-            this.lblMapSize.Location = new System.Drawing.Point(270, 241);
-            this.lblMapSize.Name = "lblMapSize";
-            this.lblMapSize.Size = new System.Drawing.Size(54, 13);
-            this.lblMapSize.TabIndex = 27;
-            this.lblMapSize.Text = "Map Size:";
+            this.lblSuffix.AutoSize = true;
+            this.lblSuffix.Location = new System.Drawing.Point(138, 81);
+            this.lblSuffix.Name = "lblSuffix";
+            this.lblSuffix.Size = new System.Drawing.Size(33, 13);
+            this.lblSuffix.TabIndex = 13;
+            this.lblSuffix.Text = "Suffix";
+            // 
+            // boxRSuffix
+            // 
+            this.boxRSuffix.Location = new System.Drawing.Point(175, 78);
+            this.boxRSuffix.Name = "boxRSuffix";
+            this.boxRSuffix.Size = new System.Drawing.Size(100, 20);
+            this.boxRSuffix.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.boxRSuffix, "The color and/or text suffix for this rank.");
+            this.boxRSuffix.TextChanged += new System.EventHandler(this.boxRSuffix_TextChanged);
             // 
             // Form1
             // 
@@ -2084,6 +2152,8 @@
         private System.Windows.Forms.Button btnSavePreview;
         public System.Windows.Forms.ToolStripProgressBar updateProgress;
         private System.Windows.Forms.Label lblMapSize;
+        private System.Windows.Forms.TextBox boxRSuffix;
+        private System.Windows.Forms.Label lblSuffix;
     }
 }
 

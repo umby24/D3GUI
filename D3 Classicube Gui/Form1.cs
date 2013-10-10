@@ -392,7 +392,7 @@ namespace D3_Classicube_Gui {
             if (initRank == "")
                 return;
 
-            ranks.Add(new Rank(initRank, initName, ""));
+            ranks.Add(new Rank(initRank, initName, "", ""));
             ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
             lstRanks.Items.Clear();
 
@@ -633,9 +633,7 @@ namespace D3_Classicube_Gui {
             tm.Show();
         }
         private void button1_Click_1(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Documentation\\LUA-Commands.txt";
-            tm.Show();
+            System.Diagnostics.Process.Start("http://umby.d3s.co/CCD3/index.php?page=lua");
         }
         #endregion
         #region Helping Functions
@@ -856,6 +854,7 @@ namespace D3_Classicube_Gui {
             string tempRank = "";
             string tempName = "";
             string tempPrefix = "";
+            string tempSuffix = "";
             string tempClient = "0";
 
             do {
@@ -866,7 +865,7 @@ namespace D3_Classicube_Gui {
 
                 if (thisLine.StartsWith("[") && thisLine.Contains("]")) {
                     if (tempRank != "") {
-                        ranks.Add(new Rank(tempRank, tempName, tempPrefix,tempClient));
+                        ranks.Add(new Rank(tempRank, tempName, tempPrefix,tempPrefix, tempClient));
                     }
                     tempRank = thisLine.Substring(1, thisLine.IndexOf("]") - 1);
                 } else if (thisLine.Contains("=")) {
@@ -880,6 +879,9 @@ namespace D3_Classicube_Gui {
                         case "Prefix":
                             tempPrefix = value;
                             break;
+                        case "Suffix":
+                            tempSuffix = value;
+                            break;
                         case "On_Client":
                             tempClient = value;
                             break;
@@ -888,7 +890,7 @@ namespace D3_Classicube_Gui {
 
             } while (!fileReader.EndOfStream);
             fileReader.Close();
-            ranks.Add(new Rank(tempRank, tempName, tempPrefix, tempClient));
+            ranks.Add(new Rank(tempRank, tempName, tempPrefix, tempSuffix, tempClient));
             lstRanks.Items.Clear();
 
             foreach (Rank b in ranks) {
@@ -902,6 +904,9 @@ namespace D3_Classicube_Gui {
                 fileWriter.WriteLine("[" + b.number + "]");
                 fileWriter.WriteLine("Name = " + b.name);
                 fileWriter.WriteLine("Prefix = " + b.prefix);
+
+                if (b.suffix != "")
+                    fileWriter.WriteLine("Suffix = " + b.suffix);
 
                 if (b.onclient == "100")
                     fileWriter.WriteLine("On_Client = 100");
@@ -1910,6 +1915,11 @@ namespace D3_Classicube_Gui {
             if (dr == System.Windows.Forms.DialogResult.OK) 
                 picOverview.Image.Save(sd.FileName);
             
+        }
+
+        private void boxRSuffix_TextChanged(object sender, EventArgs e) {
+            if (currentRank != null)
+                currentRank.suffix = boxRSuffix.Text;
         }
 
 

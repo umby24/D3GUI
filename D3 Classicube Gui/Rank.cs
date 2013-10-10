@@ -9,12 +9,14 @@ namespace D3_Classicube_Gui {
         public string number;
         public string name;
         public string prefix;
+        public string suffix;
         public string onclient;
 
-        public Rank(string rank, string Name, string Prefix, string onClient = "0") {
+        public Rank(string rank, string Name, string Prefix, string Suffix, string onClient = "0") {
             number = rank;
             name = Name;
             prefix = Prefix;
+            suffix = Suffix;
             onclient = onClient;
         }
     }

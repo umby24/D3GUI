@@ -10,7 +10,7 @@ namespace D3_Classicube_Gui {
     class Updater {
         string updateUrl = "http://umby.d3s.co/CCD3/gui";
         string fileUrl = "http://umby.d3s.co/CCD3/";
-        string thisVersion = "1.0.3";
+        string thisVersion = "1.0.4";
         string serverVersion = "";
         public Form1 mainForm;
 
