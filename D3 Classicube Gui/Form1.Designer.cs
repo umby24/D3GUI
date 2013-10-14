@@ -121,6 +121,8 @@
             this.lstMaps = new System.Windows.Forms.ListBox();
             this.picOverview = new System.Windows.Forms.PictureBox();
             this.tabPage10 = new System.Windows.Forms.TabPage();
+            this.boxRSuffix = new System.Windows.Forms.TextBox();
+            this.lblSuffix = new System.Windows.Forms.Label();
             this.btnRevert = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.boxRank = new System.Windows.Forms.TextBox();
@@ -152,6 +154,14 @@
             this.boxFiltered = new System.Windows.Forms.RichTextBox();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.lstPlayers = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.setRankToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.kickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.banToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unstopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.muteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unmuteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnQA = new System.Windows.Forms.Button();
@@ -181,8 +191,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.lblSuffix = new System.Windows.Forms.Label();
-            this.boxRSuffix = new System.Windows.Forms.TextBox();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -201,6 +209,7 @@
             this.tabPage5.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabPage7.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.tabPage8.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -257,7 +266,7 @@
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextIcon;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Text = "D3 Server";
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
             // contextIcon
@@ -1273,6 +1282,24 @@
             this.tabPage10.Text = "Ranks";
             this.tabPage10.UseVisualStyleBackColor = true;
             // 
+            // boxRSuffix
+            // 
+            this.boxRSuffix.Location = new System.Drawing.Point(175, 78);
+            this.boxRSuffix.Name = "boxRSuffix";
+            this.boxRSuffix.Size = new System.Drawing.Size(100, 20);
+            this.boxRSuffix.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.boxRSuffix, "The color and/or text suffix for this rank.");
+            this.boxRSuffix.TextChanged += new System.EventHandler(this.boxRSuffix_TextChanged);
+            // 
+            // lblSuffix
+            // 
+            this.lblSuffix.AutoSize = true;
+            this.lblSuffix.Location = new System.Drawing.Point(138, 81);
+            this.lblSuffix.Name = "lblSuffix";
+            this.lblSuffix.Size = new System.Drawing.Size(33, 13);
+            this.lblSuffix.TabIndex = 13;
+            this.lblSuffix.Text = "Suffix";
+            // 
             // btnRevert
             // 
             this.btnRevert.Location = new System.Drawing.Point(138, 156);
@@ -1440,7 +1467,7 @@
             this.lblInfo.Size = new System.Drawing.Size(177, 78);
             this.lblInfo.TabIndex = 5;
             this.lblInfo.Text = "Server Software by: Dadido3\r\n\r\nServer software written in PureBasic\r\nGUI written " +
-    "in C#\r\n\r\nv1.0.4";
+    "in C#\r\n\r\nv1.0.5";
             // 
             // lblUmby
             // 
@@ -1604,11 +1631,74 @@
             this.lstPlayers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstPlayers.ContextMenuStrip = this.contextMenuStrip1;
             this.lstPlayers.FormattingEnabled = true;
             this.lstPlayers.Location = new System.Drawing.Point(8, 8);
             this.lstPlayers.Name = "lstPlayers";
             this.lstPlayers.Size = new System.Drawing.Size(517, 225);
             this.lstPlayers.TabIndex = 0;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setRankToolStripMenuItem,
+            this.kickToolStripMenuItem,
+            this.banToolStripMenuItem,
+            this.stopToolStripMenuItem,
+            this.unstopToolStripMenuItem,
+            this.muteToolStripMenuItem,
+            this.unmuteToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(120, 158);
+            // 
+            // setRankToolStripMenuItem
+            // 
+            this.setRankToolStripMenuItem.Name = "setRankToolStripMenuItem";
+            this.setRankToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.setRankToolStripMenuItem.Text = "&Set Rank";
+            this.setRankToolStripMenuItem.Click += new System.EventHandler(this.setRankToolStripMenuItem_Click);
+            // 
+            // kickToolStripMenuItem
+            // 
+            this.kickToolStripMenuItem.Name = "kickToolStripMenuItem";
+            this.kickToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.kickToolStripMenuItem.Text = "&Kick";
+            this.kickToolStripMenuItem.Click += new System.EventHandler(this.kickToolStripMenuItem_Click);
+            // 
+            // banToolStripMenuItem
+            // 
+            this.banToolStripMenuItem.Name = "banToolStripMenuItem";
+            this.banToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.banToolStripMenuItem.Text = "&Ban";
+            this.banToolStripMenuItem.Click += new System.EventHandler(this.banToolStripMenuItem_Click);
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.stopToolStripMenuItem.Text = "&Stop";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            // 
+            // unstopToolStripMenuItem
+            // 
+            this.unstopToolStripMenuItem.Name = "unstopToolStripMenuItem";
+            this.unstopToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.unstopToolStripMenuItem.Text = "&Unstop";
+            this.unstopToolStripMenuItem.Click += new System.EventHandler(this.unstopToolStripMenuItem_Click);
+            // 
+            // muteToolStripMenuItem
+            // 
+            this.muteToolStripMenuItem.Name = "muteToolStripMenuItem";
+            this.muteToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.muteToolStripMenuItem.Text = "&Mute";
+            this.muteToolStripMenuItem.Click += new System.EventHandler(this.muteToolStripMenuItem_Click);
+            // 
+            // unmuteToolStripMenuItem
+            // 
+            this.unmuteToolStripMenuItem.Name = "unmuteToolStripMenuItem";
+            this.unmuteToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.unmuteToolStripMenuItem.Text = "U&nmute";
+            this.unmuteToolStripMenuItem.Click += new System.EventHandler(this.unmuteToolStripMenuItem_Click);
             // 
             // tabPage8
             // 
@@ -1923,24 +2013,6 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
-            // lblSuffix
-            // 
-            this.lblSuffix.AutoSize = true;
-            this.lblSuffix.Location = new System.Drawing.Point(138, 81);
-            this.lblSuffix.Name = "lblSuffix";
-            this.lblSuffix.Size = new System.Drawing.Size(33, 13);
-            this.lblSuffix.TabIndex = 13;
-            this.lblSuffix.Text = "Suffix";
-            // 
-            // boxRSuffix
-            // 
-            this.boxRSuffix.Location = new System.Drawing.Point(175, 78);
-            this.boxRSuffix.Name = "boxRSuffix";
-            this.boxRSuffix.Size = new System.Drawing.Size(100, 20);
-            this.boxRSuffix.TabIndex = 14;
-            this.toolTip1.SetToolTip(this.boxRSuffix, "The color and/or text suffix for this rank.");
-            this.boxRSuffix.TextChanged += new System.EventHandler(this.boxRSuffix_TextChanged);
-            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -1983,6 +2055,7 @@
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
             this.tabPage7.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.tabPage8.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
@@ -2154,6 +2227,14 @@
         private System.Windows.Forms.Label lblMapSize;
         private System.Windows.Forms.TextBox boxRSuffix;
         private System.Windows.Forms.Label lblSuffix;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem setRankToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem kickToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem banToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unstopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem muteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unmuteToolStripMenuItem;
     }
 }
 

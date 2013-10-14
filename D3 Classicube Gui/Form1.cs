@@ -29,6 +29,7 @@ namespace D3_Classicube_Gui {
         int curY = 3;
         Dictionary<string, string> cButtons;
         bool removing = false;
+        string tempEID;
         public bool[] cSettings; // -- 0 = Heartbeat, 1 = Chat, 2 = Command, 3 = Mapsave, 4 = Player login, 5 = LUA Messages 6 = Timestamps
         #region Server Settings
         string serverName = "";
@@ -177,6 +178,7 @@ namespace D3_Classicube_Gui {
             lblGen.Text = "Generating...";
             Thread wait = new Thread(waiter);
             wait.Start();
+            
         }
 
         private void waiter() {
@@ -188,7 +190,10 @@ namespace D3_Classicube_Gui {
             isoMap.time2d = "";
             isoMap.time3d = "";
             tempMap.preview = isoMap.generatedImage;
-            isoMap.generatedImage = null;
+            isoMap.generatedImage.Dispose();
+            isoMap = null;
+            tempMap = null;
+            GC.Collect();
         }
         private void btnMapRez_Click(object sender, EventArgs e) {
             string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a new size for the map", "Map Resize", "64,64,64");
@@ -499,6 +504,7 @@ namespace D3_Classicube_Gui {
                     boxRName.Text = f.name;
                     boxRPrefix.Text = f.prefix;
                     boxRank.Text = f.number;
+                    boxRSuffix.Text = f.suffix;
 
                     if (f.onclient == "100")
                         chkIsOp.Checked = true;
@@ -675,12 +681,12 @@ namespace D3_Classicube_Gui {
 
                         if (parts[3].Contains("logged in")) {
                             putMessage(name + " logged in.");
-                            lstPlayers.Items.Add(name);
+                            lstPlayers.Items.Add(name + ":" + tempEID);
                             online += 1;
                         } else {
                             putMessage(name + " logged out.");
-                            if (lstPlayers.Items.Contains(name)) {
-                                lstPlayers.Items.Remove(name);
+                            if (lstPlayers.Items.Contains(name + ":" + tempEID)) {
+                                lstPlayers.Items.Remove(name + ":" + tempEID);
                                 online -= 1;
                             }
                         }
@@ -693,6 +699,16 @@ namespace D3_Classicube_Gui {
                 case "Network.pbi":
                     if (parts[2].Replace(" ", "") == "83") {
                         putMessage("WARNING: Unable to start server networking! Make sure there are no port conflicts.");
+                    }
+                    if (parts[2].Replace(" ", "") == "234") {
+                        string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
+                        Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
+                        tempEID = Entity_ID;
+                    }
+                    if (parts[2].Replace(" ", "") == "252") {
+                        string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
+                        Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
+                        tempEID = Entity_ID;
                     }
                     break;
                 case "Lua.pbi":
@@ -865,9 +881,10 @@ namespace D3_Classicube_Gui {
 
                 if (thisLine.StartsWith("[") && thisLine.Contains("]")) {
                     if (tempRank != "") {
-                        ranks.Add(new Rank(tempRank, tempName, tempPrefix,tempPrefix, tempClient));
+                        ranks.Add(new Rank(tempRank, tempName, tempPrefix,tempSuffix, tempClient));
                     }
                     tempRank = thisLine.Substring(1, thisLine.IndexOf("]") - 1);
+                    tempSuffix = "";
                 } else if (thisLine.Contains("=")) {
                     string command = thisLine.Substring(0, thisLine.IndexOf(" "));
                     string value = thisLine.Substring(thisLine.IndexOf("=") + 2, thisLine.Length - (thisLine.IndexOf("=") + 2));
@@ -1920,6 +1937,96 @@ namespace D3_Classicube_Gui {
         private void boxRSuffix_TextChanged(object sender, EventArgs e) {
             if (currentRank != null)
                 currentRank.suffix = boxRSuffix.Text;
+        }
+
+        private void setRankToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("What rank do you wish to set this player to? (-32767-32767)", "Set Rank","100");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Set_Rank(Entity_Get_Player(Client_Get_Entity(" + eid + ")), " + answer + ")");
+            fileWriter.Close();
+        }
+
+        private void kickToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a kick message", "Kick Player", "Kicked by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Kick(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\", 1, 1, 1)");
+            fileWriter.Close();
+        }
+
+        private void banToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a ban message", "Ban Player", "Banned by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Ban(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\")");
+            fileWriter.Close();
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a reason for stopping this player.", "Stop Player", "Stopped by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Stop(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\")");
+            fileWriter.Close();
+        }
+
+        private void unstopToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Unstop(Entity_Get_Player(Client_Get_Entity(" + eid + ")))");
+            fileWriter.Close();
+        }
+
+        private void muteToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a duration to mute in minutes (0 for indefinate)", "Mute Player", "30");
+            string answer2 = Microsoft.VisualBasic.Interaction.InputBox("Please enter a mute message", "Mute Player", "Muted by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Mute(Entity_Get_Player(Client_Get_Entity(" + eid + ")), " + answer + ", \"" + answer2 + "\")");
+            fileWriter.Close();
+        }
+
+        private void unmuteToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Unmute(Entity_Get_Player(Client_Get_Entity(" + eid + ")))");
+            fileWriter.Close();
         }
 
 

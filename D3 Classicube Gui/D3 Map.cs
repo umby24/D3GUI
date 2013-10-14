@@ -92,8 +92,8 @@ namespace D3_ISO_Viewer {
 
             heightMap = new byte[Size_X, Size_Y];
 
-            for (int ix = 0; ix <= (Size_X - 1); ix++) {
-                for (int iy = 0; iy <= (Size_Y - 1); iy++) {
+            for (int ix = 0; ix < Size_X; ix++) {
+                for (int iy = 0; iy < Size_Y; iy++) {
                     for (int iz = (Size_Z - 1); iz > -1; iz--) {
                         int blockID = getBlockID(ix, iy, iz);
                         if (ix == 63) {
@@ -198,11 +198,11 @@ namespace D3_ISO_Viewer {
             int timex = 0;
             int timey = 0;
 
-            for (int ix = 0; ix <= (Size_X - 1); ix++) {
+            for (int ix = 0; ix < Size_X; ix++) {
                 int X = ix;
-                for (int iy = 0; iy <= (Size_Y - 1); iy++) {
+                for (int iy = 0; iy < Size_Y; iy++) {
                     int Y = iy;
-                    for (int iz = 0; iz <= (Size_Z - 1); iz++) {
+                    for (int iz = 0; iz < Size_Z; iz++) {
                         int Z = iz;
                         if (render(ix, iy, iz) == false)
                             continue;
