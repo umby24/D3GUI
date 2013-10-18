@@ -21,7 +21,6 @@ namespace D3_ISO_Viewer {
         public string time3d = "";
         public byte[] mapData;
         byte[,] heightMap;
-        bool[, ,] isoMap;
 
         public Image generatedImage;
         Dictionary<byte, Color> colortable;

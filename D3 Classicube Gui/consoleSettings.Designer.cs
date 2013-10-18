@@ -146,6 +146,6 @@
         public System.Windows.Forms.CheckBox chkMapSave;
         public System.Windows.Forms.CheckBox chkPlayers;
         public System.Windows.Forms.CheckBox chkLua;
-        private System.Windows.Forms.CheckBox chkTimes;
+        public System.Windows.Forms.CheckBox chkTimes;
     }
 }

@@ -11,27 +11,29 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
 using System.IO;
-using C_Minebot;
 
 namespace D3_Classicube_Gui {
     public partial class Form1 : Form {
         #region Variables
+        #region Map Related
         D3_ISO_Viewer.D3_Map isoMap;
-        Rank currentRank;
         Map tempMap;
+        #endregion
+        #region GUI Related
         Process serverProc;
-        bool mini = false;
-        miniForm mf;
-        bool running = false;
-        int online = 0;
-        string lastHeartbeat = "";
         int curX = 8;
         int curY = 3;
-        Dictionary<string, string> cButtons;
+        bool mini = false;
         bool removing = false;
         string tempEID;
+        Rank currentRank;
+        miniForm mf;
+        Dictionary<string, string> cButtons;
         public bool[] cSettings; // -- 0 = Heartbeat, 1 = Chat, 2 = Command, 3 = Mapsave, 4 = Player login, 5 = LUA Messages 6 = Timestamps
+        #endregion
         #region Server Settings
+        string lastHeartbeat = "";
+        int online = 0;
         string serverName = "";
         string motd = "";
         string welcomeMessage = "";
@@ -46,392 +48,98 @@ namespace D3_Classicube_Gui {
         #endregion
         #endregion
         #region Button Clicks
-        private void btnAddMap_Click(object sender, EventArgs e) {
-            string name = Microsoft.VisualBasic.Interaction.InputBox("Provide a name for the new map", "New Map");
-            if (name == "")
-                return;
-            string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a size for the new map", "New Map", "64,64,64");
-            if (size == "")
-                return;
-            // -- Check if the size is valid
-            if (!size.Contains(",")) {
-                MessageBox.Show("Incorrect format for map size.");
-                return;
-            }
-            string[] splits = size.Replace(" ", "").Split(new char[] { ',' });
-            if (splits.Length != 3) {
-                MessageBox.Show("Incorrect format for map size, please provide an X,Y,Z");
-                return;
-            }
-            // -- Next, get a unique map ID to use..
-            int id = 0;
-            bool broke = false;
-            foreach (Map m in maps) {
-                if ((int.Parse(m.mapID) - id) > 1) {
-                    id += 1;
-                    broke = true;
-                    break;
-                } else {
-                    id += 1;
-                }
-            }
-            if (!broke)
-                id += 1;
-            // -- Generate lua code to make the map, fill it, save it, and resend it.
+        #region Main Tab
+        private void btnSend_Click(object sender, EventArgs e) {
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Add(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ", \"" + name + "\")");
-            fileWriter.WriteLine("Mapfill_standart(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ")"); // -- Fill the map to flatgrass for them too :D
-            fileWriter.WriteLine("Map_Action_Add_Save(" + id.ToString() + ", \"\")");
-            fileWriter.WriteLine("Map_Resend(" + id.ToString() + ")");
+            fileWriter.Write("System_Message_Network_Send_2_All(-1, \"&c[Console]&f: " + boxChat.Text + "\")");
             fileWriter.Close();
 
-            loadMaps();
+            putMessage("[Console]: " + boxChat.Text);
+            boxChat.Clear();
         }
-
-        private void btnMapReloads_Click(object sender, EventArgs e) {
-            loadMaps();
+        private void button1_Click(object sender, EventArgs e) {
+            timedMessages tm = new timedMessages();
+            tm.file = "Data\\Answer.txt";
+            tm.Show();
         }
+        private void btnUndo_Click(object sender, EventArgs e) {
+            timedMessages tm = new timedMessages();
+            tm.file = "Data\\Undo.txt";
+            tm.Show();
+        }
+        private void btnStart_Click(object sender, EventArgs e) {
+            serverProc.Start();
+            serverProc.BeginOutputReadLine();
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;
+            lblStatus.Text = "ONLINE";
+            putMessage("Server started.");
+        }
+        private void btnStop_Click(object sender, EventArgs e) {
 
-        private void btnUnloadMap_Click(object sender, EventArgs e) {
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
+            serverProc.Kill();
+            serverProc.CancelOutputRead();
+            serverProc.Close();
+
+            lblStatus.Text = "OFFLINE";
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
+
+            // -- Clear players..
+            online = 0;
+            lstPlayers.Items.Clear();
+            lblHeartbeat.Text = "Last Hearbeat:";
+
+            putMessage("Server stopped.");
+        }
+        private void btnLua_Click(object sender, EventArgs e) {
+            string luaCommand = Microsoft.VisualBasic.Interaction.InputBox("Enter the LUA command to be run", "LUA run");
+
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Action_Add_Delete(" + thisMap.mapID + ")");
-            fileWriter.Close();
-            loadMaps();
-        }
-
-        private void btnDeleteMap_Click(object sender, EventArgs e) {
-            // -- Unload map and delete its files.
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Action_Add_Delete(" + thisMap.mapID + ")");
-            fileWriter.Close();
-            Directory.Delete(thisMap.mapDirectory, true);
-            loadMaps();
-        }
-
-        private void btnRenameMap_Click(object sender, EventArgs e) {
-            string mapname = Microsoft.VisualBasic.Interaction.InputBox("Enter a new name for the map", "Rename map");
-            if (mapname == "")
-                return;
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Name(" + thisMap.mapID + ", \"" + mapname + "\")");
-            fileWriter.Close();
-            thisMap.mapName = mapname;
-            loadMaps();
-        }
-
-        private void btnRegenPrev_Click(object sender, EventArgs e) {
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Action_Add_Save(" + thisMap.mapID + ")");
+            fileWriter.Write(luaCommand);
             fileWriter.Close();
 
-            D3_ISO_Viewer.D3_Map mymap = new D3_ISO_Viewer.D3_Map();
-            mymap.readConfig(thisMap.mapDirectory + "\\Config.txt");
-            mymap.loadBlockColors("Data\\Block.txt");
-            mymap.unzip(thisMap.mapDirectory + "\\Data-Layer.gz");
-
-            
-
-            Thread mapGen = new Thread(mymap.generate_Heightmap);
-            mapGen.Start();
-            mapGen.Join(2000);
-
-            if ((string)dropOverType.SelectedItem == "ISO") {
-                Thread mgen = new Thread(mymap.generate_iso);
-                mgen.Start();
-            } else if ((string)dropOverType.SelectedItem == "2D") {
-                Thread mgen = new Thread(mymap.generate_2D);
-                mgen.Start();
-            } else {
-                MessageBox.Show("Please select and overview type.");
-                return;
-            }
-            isoMap = mymap;
-            tempMap = thisMap;
-            lblGen.Text = "Generating...";
-            Thread wait = new Thread(waiter);
-            wait.Start();
-            
+            putMessage("LUA Command has been run.");
         }
-
-        private void waiter() {
-            while (isoMap.generatedImage == null) {
-                continue;
-            }
-            picOverview.Image = isoMap.generatedImage;
-            lblGen.Text = "Generated in " + isoMap.time2d + isoMap.time3d + "s";
-            isoMap.time2d = "";
-            isoMap.time3d = "";
-            tempMap.preview = isoMap.generatedImage;
-            isoMap.generatedImage.Dispose();
-            isoMap = null;
-            tempMap = null;
-            GC.Collect();
+        private void btnTimed_Click(object sender, EventArgs e) {
+            timedMessages tm = new timedMessages();
+            tm.file = "Data\\Timed_Messages.txt";
+            tm.Show();
         }
-        private void btnMapRez_Click(object sender, EventArgs e) {
-            string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a new size for the map", "Map Resize", "64,64,64");
-            if (size == "")
-                return;
-            // -- Check if the size is valid
-            if (!size.Contains(",")) {
-                MessageBox.Show("Incorrect format for map size.");
-                return;
-            }
-            string[] splits = size.Replace(" ", "").Split(new char[] { ',' });
-            if (splits.Length != 3) {
-                MessageBox.Show("Incorrect format for map size, please provide an X,Y,Z");
-                return;
-            }
-
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Action_Add_Resize(" + thisMap.mapID + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ")");
-            fileWriter.Close();
+        private void btnFilter_Click(object sender, EventArgs e) {
+            consoleSettings cs = new consoleSettings();
+            cs.Mainform = this;
+            cs.chkHeartbeat.Checked = cSettings[0];
+            cs.chkChat.Checked = cSettings[1];
+            cs.chkCommands.Checked = cSettings[2];
+            cs.chkMapSave.Checked = cSettings[3];
+            cs.chkPlayers.Checked = cSettings[4];
+            cs.chkLua.Checked = cSettings[5];
+            cs.chkTimes.Checked = cSettings[6];
+            cs.Show();
         }
-
-        private void btnRegenMap_Click(object sender, EventArgs e) {
-            string args = Microsoft.VisualBasic.Interaction.InputBox("Please enter any additional arguments you would like to pass to the map generator (if supported)", "Mapfill");
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Action_Add_Fill(" + thisMap.mapID + ", \"" + (string)dropMapGen.SelectedItem + "\", \"" + args + "\")");
-            fileWriter.WriteLine("System_Message_Network_Send_2_All(" + thisMap.mapID + ", \"Map filled from console.\")");
-            fileWriter.Close();
+        private void btnMini_Click(object sender, EventArgs e) {
+            mf = new miniForm();
+            mf.lblMotd.Text = motd;
+            mf.lblName.Text = serverName;
+            mf.lblOnline.Text = online + "/" + maxPlayers;
+            mf.lblPublic.Text = pub.ToString();
+            mf.lblVerify.Text = nameVerify.ToString();
+            mf.lblHeartbeat.Text = lastHeartbeat;
+            mf.Mainform = this;
+            mini = true;
+            mf.Show();
+            this.Hide();
         }
-
-        private void btnBSave_Click(object sender, EventArgs e) {
-            StreamWriter SW = new StreamWriter("Data\\Block.txt");
-            foreach (Block b in blocks) {
-                if (b.blockName != "--Reserved--") {
-                    SW.WriteLine("[" + b.internalID + "]");
-                    SW.WriteLine("Name = " + b.blockName);
-                    SW.WriteLine("On_Client = " + b.clientID);
-                    SW.WriteLine("Physic = " + b.physic);
-                    SW.WriteLine("Physic_Plugin = " + b.physicPlugin);
-                    SW.WriteLine("Do_Time = " + b.doTime);
-                    SW.WriteLine("Do_Time_Random = " + b.doTimeRandom);
-                    SW.WriteLine("Do_Repeat = " + b.doRepeat);
-                    SW.WriteLine("Do_By_Load = " + b.dobyLoad);
-                    SW.WriteLine("Create_Plugin = " + b.createPlugin);
-                    SW.WriteLine("Delete_Plugin = " + b.delPlugin);
-                    SW.WriteLine("Rank_Place = " + b.rankPlace);
-                    SW.WriteLine("Rank_Delete = " + b.rankDelete);
-                    SW.WriteLine("After_Delete = " + b.afterDelete);
-                    SW.WriteLine("Killer = " + b.killer);
-                    SW.WriteLine("Special = " + b.special);
-                    SW.WriteLine("Color_Overview = " + b.overviewColor);
-                    if (b.RBL != "" && b.RBL != null)
-                        SW.WriteLine("Replace_By_Load = " + b.RBL);
-                    SW.WriteLine("");
-                } else {
-                    SW.WriteLine("[" + b.internalID + "]");
-                    SW.WriteLine("Replace_By_Load = " + b.RBL);
-                    SW.WriteLine("");
-                }
-            }
-            SW.Close();
+        private void btnTray_Click(object sender, EventArgs e) {
+            this.Hide();
+            notifyIcon1.Visible = true;
         }
-
-        private void btnBRevert_Click(object sender, EventArgs e) {
-            loadBlocks();
+        private void btnSave_Click(object sender, EventArgs e) {
+            saveSettings();
         }
-
-        private void btnAddBlock_Click(object sender, EventArgs e) {
-            string blockName = Microsoft.VisualBasic.Interaction.InputBox("Please enter a name for the new block.", "New block");
-
-            if (blockName == "")
-                return;
-            // First need to find a new ID to use on the server for this block.
-            int internalID = 0;
-            bool broke = false;
-            foreach (Block b in blocks) {
-                if (int.Parse(b.internalID) - internalID > 1) {
-                    internalID += 1;
-                    broke = true;
-                    break;
-                } else {
-                    internalID += 1;
-                }
-            }
-            if (!broke)
-                internalID += 1;
-
-            Block newBlock = new Block(internalID.ToString(), blockName, "0", "0", "", "0", "0", "0", "0", "", "", "0", "0", "0", "0", "0", "-1");
-            blocks.Add(newBlock);
-            blocks = blocks.OrderBy(x => int.Parse(x.internalID)).ToList();
-            lstBlock.Items.Clear();
-
-            foreach (Block b in blocks) {
-                lstBlock.Items.Add(b.blockName);
-            }
-
-        }
-
-        private void btnRemBlock_Click(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            Block myblock = null;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    myblock = b;
-                    break;
-                }
-            }
-            if (myblock != null) {
-                blocks.Remove(myblock);
-                lstBlock.Items.Clear();
-                foreach (Block b in blocks) {
-                    lstBlock.Items.Add(b.blockName);
-                }
-            }
-        }
-        private void btnCRevert_Click(object sender, EventArgs e) {
-            loadCommands();
-        }
-
-        private void lstCmd_SelectedIndexChanged(object sender, EventArgs e) {
-            foreach (Command c in commands) {
-                if (c.Name == (string)lstCmd.SelectedItem) {
-                    boxCommand.Text = c.Name;
-                    boxCRank.Text = c.rank;
-                    boxShowRank.Text = c.rankShow;
-                    boxPlugin.Text = c.plugin;
-                    boxGroup.Text = c.group;
-                    boxDescript.Text = c.description;
-                    //break;
-                }
-            }
-        }
-        private void btnCSave_Click(object sender, EventArgs e) {
-            StreamWriter SW = new StreamWriter("Data\\Command.txt");
-            foreach (Command c in commands) {
-                SW.WriteLine("[" + c.internalName + "]");
-                SW.WriteLine("Name = " + c.Name);
-                SW.WriteLine("Rank = " + c.rank);
-                SW.WriteLine("Rank_Show = " + c.rankShow);
-                SW.WriteLine("Plugin = " + c.plugin);
-                SW.WriteLine("Group = " + c.group);
-                SW.WriteLine("Description = " + c.description);
-                SW.WriteLine("");
-            }
-            SW.Close();
-        }
-
-        private void btnAddCom_Click(object sender, EventArgs e) {
-            string iName = Microsoft.VisualBasic.Interaction.InputBox("What is the internal name for this command?", "Internal");
-            string Name = Microsoft.VisualBasic.Interaction.InputBox("What will be the command that players use to activate this command?", "Command");
-            Command newC = new Command(iName, Name, "0", "0", "", "", "");
-            commands.Add(newC);
-            lstCmd.Items.Clear();
-            foreach (Command b in commands) {
-                lstCmd.Items.Add(b.Name);
-            }
-        }
-
-        private void btnRemCom_Click(object sender, EventArgs e) {
-            string selected = (string)lstCmd.SelectedItem;
-
-            Command myCommand = null;
-            foreach (Command c in commands) {
-                if (c.Name == selected) {
-                    myCommand = c;
-                    break;
-                }
-            }
-            if (myCommand == null)
-                return;
-
-            commands.Remove(myCommand);
-
-            lstCmd.Items.Clear();
-            foreach (Command b in commands) {
-                lstCmd.Items.Add(b.Name);
-            }
-        }
-        private void btnAddRank_Click(object sender, EventArgs e) {
-            string initName = Microsoft.VisualBasic.Interaction.InputBox("Please provide an initial name for this rank.", "Add rank");
-
-            if (initName == "")
-                return;
-
-            string initRank = Microsoft.VisualBasic.Interaction.InputBox("Please provide an initial rank number for this rank.", "Add rank", "40");
-
-            if (initRank == "")
-                return;
-
-            ranks.Add(new Rank(initRank, initName, "", ""));
-            ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
-            lstRanks.Items.Clear();
-
-            foreach (Rank b in ranks) {
-                lstRanks.Items.Add(b.name);
-            }
-        }
-
-        private void btnRemRank_Click(object sender, EventArgs e) {
-            Rank myrank = null;
-            foreach (Rank b in ranks) {
-                if (b.name == (string)lstRanks.SelectedItem) {
-                    myrank = b;
-                    break;
-                }
-            }
-
-            if (myrank == null)
-                return;
-
-            ranks.Remove(myrank);
-            lstRanks.Items.Clear();
-
-            ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
-
-            foreach (Rank b in ranks) {
-                lstRanks.Items.Add(b.name);
-            }
-        }
-
-        private void btnRevert_Click(object sender, EventArgs e) {
-            loadRanks();
-        }
-
+        #endregion
+        #region Custom Luas Tab
         private void btnAddLua_Click(object sender, EventArgs e) {
             string fileName = "";
             string buttonName = "";
@@ -477,11 +185,25 @@ namespace D3_Classicube_Gui {
                 tm.Show();
             }
 
-            RegistryControl rc = new RegistryControl();
-            string oldButtons = (string)rc.GetSetting("SH", "D3 GUI", "luas", "");
+            settingsReader rc;
+
+            if (!File.Exists("GUI.ini"))
+                rc = new settingsReader("GUI.ini", true);
+            else {
+                rc = new settingsReader("GUI.ini");
+                rc.readSettings();
+            }
+
+            string oldButtons = "";
+
+            if (rc.settings.ContainsKey("luas"))
+                oldButtons = rc.settings["luas"];
+            
 
             oldButtons += buttonName + "," + fileName + "|";
-            rc.SaveSetting("SH", "D3 GUI", "luas", oldButtons);
+            rc.settings["luas"] = oldButtons;
+
+            rc.saveSettings();
 
             addButton(buttonName, fileName);
         }
@@ -489,44 +211,421 @@ namespace D3_Classicube_Gui {
             removing = true;
             MessageBox.Show("Click the button you want to remove.");
         }
-
+        #endregion
+        #region Ranks Tab
         private void btnSaveRanks_Click(object sender, EventArgs e) {
             //blocks = blocks.OrderBy(x => int.Parse(x.internalID)).ToList();
             ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
             saveRanks();
             loadRanks();
         }
+        private void btnRevert_Click(object sender, EventArgs e) {
+            loadRanks();
+        }
+        private void btnAddRank_Click(object sender, EventArgs e) {
+            string initName = Microsoft.VisualBasic.Interaction.InputBox("Please provide an initial name for this rank.", "Add rank");
 
-        private void lstRanks_SelectedIndexChanged(object sender, EventArgs e) {
-            foreach (Rank f in ranks) {
-                if (f.name == (string)lstRanks.SelectedItem) {
-                    currentRank = f;
-                    boxRName.Text = f.name;
-                    boxRPrefix.Text = f.prefix;
-                    boxRank.Text = f.number;
-                    boxRSuffix.Text = f.suffix;
+            if (initName == "")
+                return;
 
-                    if (f.onclient == "100")
-                        chkIsOp.Checked = true;
-                    else
-                        chkIsOp.Checked = false;
+            string initRank = Microsoft.VisualBasic.Interaction.InputBox("Please provide an initial rank number for this rank.", "Add rank", "40");
+
+            if (initRank == "")
+                return;
+
+            ranks.Add(new Rank(initRank, initName, "", ""));
+            ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
+            lstRanks.Items.Clear();
+
+            foreach (Rank b in ranks) {
+                lstRanks.Items.Add(b.name);
+            }
+        }
+        private void btnRemRank_Click(object sender, EventArgs e) {
+            Rank myrank = null;
+            foreach (Rank b in ranks) {
+                if (b.name == (string)lstRanks.SelectedItem) {
+                    myrank = b;
                     break;
                 }
             }
+
+            if (myrank == null)
+                return;
+
+            ranks.Remove(myrank);
+            lstRanks.Items.Clear();
+
+            ranks = ranks.OrderBy(x => int.Parse(x.number)).ToList();
+
+            foreach (Rank b in ranks) {
+                lstRanks.Items.Add(b.name);
+            }
         }
-        private void btnMini_Click(object sender, EventArgs e) {
-            mf = new miniForm();
-            mf.lblMotd.Text = motd;
-            mf.lblName.Text = serverName;
-            mf.lblOnline.Text = online + "/" + maxPlayers;
-            mf.lblPublic.Text = pub.ToString();
-            mf.lblVerify.Text = nameVerify.ToString();
-            mf.lblHeartbeat.Text = lastHeartbeat;
-            mf.Mainform = this;
-            mini = true;
-            mf.Show();
-            this.Hide();
+        #endregion
+        #region Worlds Tab
+        private void btnAddMap_Click(object sender, EventArgs e) {
+            string name = Microsoft.VisualBasic.Interaction.InputBox("Provide a name for the new map", "New Map");
+            if (name == "")
+                return;
+            string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a size for the new map", "New Map", "64,64,64");
+            if (size == "")
+                return;
+            // -- Check if the size is valid
+            if (!size.Contains(",")) {
+                MessageBox.Show("Incorrect format for map size.");
+                return;
+            }
+            string[] splits = size.Replace(" ", "").Split(new char[] { ',' });
+            if (splits.Length != 3) {
+                MessageBox.Show("Incorrect format for map size, please provide an X,Y,Z");
+                return;
+            }
+            // -- Next, get a unique map ID to use..
+            int id = 0;
+            bool broke = false;
+            foreach (Map m in maps) {
+                if ((int.Parse(m.mapID) - id) > 1) {
+                    id += 1;
+                    broke = true;
+                    break;
+                } else {
+                    id += 1;
+                }
+            }
+            if (!broke)
+                id += 1;
+            // -- Generate lua code to make the map, fill it, save it, and resend it.
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Add(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ", \"" + name + "\")");
+            fileWriter.WriteLine("Mapfill_standart(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ")"); // -- Fill the map to flatgrass for them too :D
+            fileWriter.WriteLine("Map_Action_Add_Save(" + id.ToString() + ", \"\")");
+            fileWriter.WriteLine("Map_Resend(" + id.ToString() + ")");
+            fileWriter.Close();
+
+            loadMaps();
         }
+        private void btnUnloadMap_Click(object sender, EventArgs e) {
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Delete(" + thisMap.mapID + ")");
+            fileWriter.Close();
+            loadMaps();
+        }
+        private void btnDeleteMap_Click(object sender, EventArgs e) {
+            // -- Unload map and delete its files.
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Delete(" + thisMap.mapID + ")");
+            fileWriter.Close();
+            Directory.Delete(thisMap.mapDirectory, true);
+            loadMaps();
+        }
+        private void btnRenameMap_Click(object sender, EventArgs e) {
+            string mapname = Microsoft.VisualBasic.Interaction.InputBox("Enter a new name for the map", "Rename map");
+            if (mapname == "")
+                return;
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Set_Name(" + thisMap.mapID + ", \"" + mapname + "\")");
+            fileWriter.Close();
+            thisMap.mapName = mapname;
+            loadMaps();
+        }
+        private void btnRegenPrev_Click(object sender, EventArgs e) {
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Save(" + thisMap.mapID + ")");
+            fileWriter.Close();
+
+            Thread.Sleep(3000); // -- Attempt to prevent map resizing..
+
+
+            D3_ISO_Viewer.D3_Map mymap = new D3_ISO_Viewer.D3_Map();
+            mymap.readConfig(thisMap.mapDirectory + "\\Config.txt");
+            mymap.loadBlockColors("Data\\Block.txt");
+            mymap.unzip(thisMap.mapDirectory + "\\Data-Layer.gz");
+
+
+
+
+
+            if ((string)dropOverType.SelectedItem == "ISO") {
+                Thread mgen = new Thread(mymap.generate_iso);
+                mgen.Start();
+            } else if ((string)dropOverType.SelectedItem == "2D") {
+                Thread mapGen = new Thread(mymap.generate_Heightmap); // -- Only 2d requires Heightmap
+                mapGen.Start();
+                mapGen.Join(2000);
+
+                Thread mgen = new Thread(mymap.generate_2D);
+                mgen.Start();
+            } else {
+                MessageBox.Show("Please select and overview type.");
+                return;
+            }
+            isoMap = mymap;
+            tempMap = thisMap;
+            lblGen.Text = "Generating...";
+            Thread wait = new Thread(waiter);
+            wait.Start();
+
+        }
+        private void waiter() {
+            while (isoMap.generatedImage == null) {
+                continue;
+            }
+            picOverview.Image = isoMap.generatedImage;
+            lblGen.Text = "Generated in " + isoMap.time2d + isoMap.time3d + "s";
+            isoMap.time2d = "";
+            isoMap.time3d = "";
+            tempMap.preview = isoMap.generatedImage;
+            // isoMap.generatedImage.Dispose();
+            //    isoMap = null;
+            tempMap = null;
+            GC.Collect();
+        }
+        private void btnMapRez_Click(object sender, EventArgs e) {
+            string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a new size for the map", "Map Resize", "64,64,64");
+            if (size == "")
+                return;
+            // -- Check if the size is valid
+            if (!size.Contains(",")) {
+                MessageBox.Show("Incorrect format for map size.");
+                return;
+            }
+            string[] splits = size.Replace(" ", "").Split(new char[] { ',' });
+            if (splits.Length != 3) {
+                MessageBox.Show("Incorrect format for map size, please provide an X,Y,Z");
+                return;
+            }
+
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Resize(" + thisMap.mapID + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ")");
+            fileWriter.Close();
+        }
+        private void btnMapReloads_Click(object sender, EventArgs e) {
+            loadMaps();
+        }
+        private void btnRegenMap_Click(object sender, EventArgs e) {
+            string args = Microsoft.VisualBasic.Interaction.InputBox("Please enter any additional arguments you would like to pass to the map generator (if supported)", "Mapfill");
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Fill(" + thisMap.mapID + ", \"" + (string)dropMapGen.SelectedItem + "\", \"" + args + "\")");
+            fileWriter.WriteLine("System_Message_Network_Send_2_All(" + thisMap.mapID + ", \"Map filled from console.\")");
+            fileWriter.Close();
+        }
+        private void btnSavePreview_Click(object sender, EventArgs e) {
+            SaveFileDialog sd = new SaveFileDialog();
+            sd.Filter = "PNG Image | *.png";
+            DialogResult dr = sd.ShowDialog();
+
+            if (dr == System.Windows.Forms.DialogResult.OK)
+                picOverview.Image.Save(sd.FileName);
+
+        }
+        #endregion
+        #region Commands Tab
+        private void btnCSave_Click(object sender, EventArgs e) {
+            StreamWriter SW = new StreamWriter("Data\\Command.txt");
+            foreach (Command c in commands) {
+                SW.WriteLine("[" + c.internalName + "]");
+                SW.WriteLine("Name = " + c.Name);
+                SW.WriteLine("Rank = " + c.rank);
+                SW.WriteLine("Rank_Show = " + c.rankShow);
+                SW.WriteLine("Plugin = " + c.plugin);
+                SW.WriteLine("Group = " + c.group);
+                SW.WriteLine("Description = " + c.description);
+                SW.WriteLine("");
+            }
+            SW.Close();
+        }
+        private void btnCRevert_Click(object sender, EventArgs e) {
+            loadCommands();
+        }
+        private void btnAddCom_Click(object sender, EventArgs e) {
+            string iName = Microsoft.VisualBasic.Interaction.InputBox("What is the internal name for this command?", "Internal");
+            string Name = Microsoft.VisualBasic.Interaction.InputBox("What will be the command that players use to activate this command?", "Command");
+            Command newC = new Command(iName, Name, "0", "0", "", "", "");
+            commands.Add(newC);
+            lstCmd.Items.Clear();
+            foreach (Command b in commands) {
+                lstCmd.Items.Add(b.Name);
+            }
+        }
+        private void btnRemCom_Click(object sender, EventArgs e) {
+            string selected = (string)lstCmd.SelectedItem;
+
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == selected) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+
+            commands.Remove(myCommand);
+
+            lstCmd.Items.Clear();
+            foreach (Command b in commands) {
+                lstCmd.Items.Add(b.Name);
+            }
+        }
+        #endregion
+        #region Blocks Tab
+        private void pictureBox2_Click(object sender, EventArgs e) {
+            colorDialog1.Color = picOColor.BackColor;
+            DialogResult d = colorDialog1.ShowDialog();
+            if (d == System.Windows.Forms.DialogResult.OK) {
+                Color newColor = colorDialog1.Color;
+                picOColor.BackColor = newColor;
+                int decValue = newColor.B;
+                string hex = "";
+                hex += string.Format("{0:x}", decValue).PadLeft(2, '0');
+                decValue = newColor.G; hex += string.Format("{0:x}", decValue).PadLeft(2, '0');
+                decValue = newColor.R; hex += string.Format("{0:x}", decValue).PadLeft(2, '0');
+
+                long d3Number = Convert.ToInt64(hex, 16);
+                foreach (Block b in blocks) {
+                    if (b.blockName == (string)lstBlock.SelectedItem) {
+                        b.overviewColor = d3Number.ToString();
+                        break;
+                    }
+                }
+                chkTransparent.Checked = false;
+            }
+
+        }
+        private void btnBSave_Click(object sender, EventArgs e) {
+            StreamWriter SW = new StreamWriter("Data\\Block.txt");
+            foreach (Block b in blocks) {
+                if (b.blockName != "--Reserved--") {
+                    SW.WriteLine("[" + b.internalID + "]");
+                    SW.WriteLine("Name = " + b.blockName);
+                    SW.WriteLine("On_Client = " + b.clientID);
+                    SW.WriteLine("Physic = " + b.physic);
+                    SW.WriteLine("Physic_Plugin = " + b.physicPlugin);
+                    SW.WriteLine("Do_Time = " + b.doTime);
+                    SW.WriteLine("Do_Time_Random = " + b.doTimeRandom);
+                    SW.WriteLine("Do_Repeat = " + b.doRepeat);
+                    SW.WriteLine("Do_By_Load = " + b.dobyLoad);
+                    SW.WriteLine("Create_Plugin = " + b.createPlugin);
+                    SW.WriteLine("Delete_Plugin = " + b.delPlugin);
+                    SW.WriteLine("Rank_Place = " + b.rankPlace);
+                    SW.WriteLine("Rank_Delete = " + b.rankDelete);
+                    SW.WriteLine("After_Delete = " + b.afterDelete);
+                    SW.WriteLine("Killer = " + b.killer);
+                    SW.WriteLine("Special = " + b.special);
+                    SW.WriteLine("Color_Overview = " + b.overviewColor);
+                    if (b.RBL != "" && b.RBL != null)
+                        SW.WriteLine("Replace_By_Load = " + b.RBL);
+                    SW.WriteLine("");
+                } else {
+                    SW.WriteLine("[" + b.internalID + "]");
+                    SW.WriteLine("Replace_By_Load = " + b.RBL);
+                    SW.WriteLine("");
+                }
+            }
+            SW.Close();
+        }
+        private void btnBRevert_Click(object sender, EventArgs e) {
+            loadBlocks();
+        }
+        private void btnAddBlock_Click(object sender, EventArgs e) {
+            string blockName = Microsoft.VisualBasic.Interaction.InputBox("Please enter a name for the new block.", "New block");
+
+            if (blockName == "")
+                return;
+            // First need to find a new ID to use on the server for this block.
+            int internalID = 0;
+            bool broke = false;
+            foreach (Block b in blocks) {
+                if (int.Parse(b.internalID) - internalID > 1) {
+                    internalID += 1;
+                    broke = true;
+                    break;
+                } else {
+                    internalID += 1;
+                }
+            }
+            if (!broke)
+                internalID += 1;
+
+            Block newBlock = new Block(internalID.ToString(), blockName, "0", "0", "", "0", "0", "0", "0", "", "", "0", "0", "0", "0", "0", "-1");
+            blocks.Add(newBlock);
+            blocks = blocks.OrderBy(x => int.Parse(x.internalID)).ToList();
+            lstBlock.Items.Clear();
+
+            foreach (Block b in blocks) {
+                lstBlock.Items.Add(b.blockName);
+            }
+
+        }
+        private void btnRemBlock_Click(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            Block myblock = null;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    myblock = b;
+                    break;
+                }
+            }
+            if (myblock != null) {
+                blocks.Remove(myblock);
+                lstBlock.Items.Clear();
+                foreach (Block b in blocks) {
+                    lstBlock.Items.Add(b.blockName);
+                }
+            }
+        }
+        #endregion
+        #region About Tab
+        private void button1_Click_1(object sender, EventArgs e) {
+            System.Diagnostics.Process.Start("http://umby.d3s.co/CCD3/index.php?page=lua");
+        }
+        #endregion
+        #region Menu Strips
+        // -- Notify Icon..
         private void bShowToolStripMenuItem_Click(object sender, EventArgs e) {
             this.Show();
             notifyIcon1.Visible = false;
@@ -535,112 +634,95 @@ namespace D3_Classicube_Gui {
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
             this.Close();
         }
-        private void btnFilter_Click(object sender, EventArgs e) {
-            consoleSettings cs = new consoleSettings();
-            cs.Mainform = this;
-            cs.chkHeartbeat.Checked = cSettings[0];
-            cs.chkChat.Checked = cSettings[1];
-            cs.chkCommands.Checked = cSettings[2];
-            cs.chkMapSave.Checked = cSettings[3];
-            cs.chkPlayers.Checked = cSettings[4];
-            cs.chkLua.Checked = cSettings[5];
-            cs.Show();
-        }
-
-        private void btnTimed_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Timed_Messages.txt";
-            tm.Show();
-        }
-        private void btnTray_Click(object sender, EventArgs e) {
-            this.Hide();
-            notifyIcon1.Visible = true;
-        }
-
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) {
             this.Show();
             notifyIcon1.Visible = false;
         }
-        private void btnStart_Click(object sender, EventArgs e) {
-            serverProc.Start();
-            serverProc.BeginOutputReadLine();
-            running = true;
-            btnStart.Enabled = false;
-            btnStop.Enabled = true;
-            lblStatus.Text = "ONLINE";
-            putMessage("Server started.");
-        }
+        // -- Players Right Click Context menu
+        private void setRankToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
 
-        private void btnStop_Click(object sender, EventArgs e) {
-            running = false;
-            serverProc.Kill();
-            serverProc.CancelOutputRead();
-            serverProc.Close();
-
-            lblStatus.Text = "OFFLINE";
-            btnStart.Enabled = true;
-            btnStop.Enabled = false;
-            
-            putMessage("Server stopped.");
-        }
-        private void btnSave_Click(object sender, EventArgs e) {
-            saveSettings();
-        }
-        private void btnLua_Click(object sender, EventArgs e) {
-            string luaCommand = Microsoft.VisualBasic.Interaction.InputBox("Enter the LUA command to be run", "LUA run");
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("What rank do you wish to set this player to? (-32767-32767)", "Set Rank", "100");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
 
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.Write(luaCommand);
+            fileWriter.WriteLine("Player_Set_Rank(Entity_Get_Player(Client_Get_Entity(" + eid + ")), " + answer + ")");
             fileWriter.Close();
-
-            putMessage("LUA Command has been run.");
         }
-        private void btnSend_Click(object sender, EventArgs e) {
+        private void kickToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a kick message", "Kick Player", "Kicked by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.Write("System_Message_Network_Send_2_All(-1, \"&c[Console]&f: " + boxChat.Text + "\")");
+            fileWriter.WriteLine("Player_Kick(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\", 1, 1, 1)");
             fileWriter.Close();
+        }
+        private void banToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
 
-            putMessage("[Console]: " + boxChat.Text);
-            boxChat.Clear();
-        }
-        private void button1_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Answer.txt";
-            tm.Show();
-        }
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a ban message", "Ban Player", "Banned by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
 
-        private void btnBlockTypes_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Block.txt";
-            tm.Show();
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Ban(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\")");
+            fileWriter.Close();
         }
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
 
-        private void button3_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Command.txt";
-            tm.Show();
-        }
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a reason for stopping this player.", "Stop Player", "Stopped by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
 
-        private void btnMap_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Map_Settings.txt";
-            tm.Show();
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Stop(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\")");
+            fileWriter.Close();
         }
+        private void unstopToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
 
-        private void btnRanks_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Rank.txt";
-            tm.Show();
-        }
+            string selected = lstPlayers.SelectedItem.ToString();
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
 
-        private void btnUndo_Click(object sender, EventArgs e) {
-            timedMessages tm = new timedMessages();
-            tm.file = "Data\\Undo.txt";
-            tm.Show();
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Unstop(Entity_Get_Player(Client_Get_Entity(" + eid + ")))");
+            fileWriter.Close();
         }
-        private void button1_Click_1(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("http://umby.d3s.co/CCD3/index.php?page=lua");
+        private void muteToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a duration to mute in minutes (0 for indefinate)", "Mute Player", "30");
+            string answer2 = Microsoft.VisualBasic.Interaction.InputBox("Please enter a mute message", "Mute Player", "Muted by Console");
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Mute(Entity_Get_Player(Client_Get_Entity(" + eid + ")), " + answer + ", \"" + answer2 + "\")");
+            fileWriter.Close();
         }
+        private void unmuteToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstPlayers.SelectedItem.ToString() == "")
+                return;
+
+            string selected = lstPlayers.SelectedItem.ToString();
+            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Player_Unmute(Entity_Get_Player(Client_Get_Entity(" + eid + ")))");
+            fileWriter.Close();
+        }
+        #endregion
         #endregion
         #region Helping Functions
         private void filterMessage(string message) {
@@ -685,8 +767,10 @@ namespace D3_Classicube_Gui {
                             online += 1;
                         } else {
                             putMessage(name + " logged out.");
+                            tempEID = name;
                             if (lstPlayers.Items.Contains(name + ":" + tempEID)) {
                                 lstPlayers.Items.Remove(name + ":" + tempEID);
+                                tempEID = name;
                                 online -= 1;
                             }
                         }
@@ -703,12 +787,13 @@ namespace D3_Classicube_Gui {
                     if (parts[2].Replace(" ", "") == "234") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
-                        tempEID = Entity_ID;
+                        tempEID = Entity_ID.Replace(" ","");
                     }
                     if (parts[2].Replace(" ", "") == "252") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
-                        tempEID = Entity_ID;
+                        lstPlayers.Items.Remove(tempEID + ":" + Entity_ID); // -- Fixed bug
+                        tempEID = Entity_ID.Replace(" ","");
                     }
                     break;
                 case "Lua.pbi":
@@ -778,14 +863,22 @@ namespace D3_Classicube_Gui {
             chkPub.Checked = BitConverter.ToBoolean(new byte[] { pub }, 0);
 
             // -- Now load settings specific to the GUI.
+            byte settings = 62;
+            string buttons = "";
 
-            RegistryControl rc = new RegistryControl();
-            byte settings = Convert.ToByte(rc.GetSetting("SH", "D3 GUI", "Console", 62));
+            if (File.Exists("GUI.ini")) {
+                settingsReader sc = new settingsReader("GUI.ini");
+                sc.readSettings();
+                if (sc.settings.ContainsKey("Console"))
+                    settings = (byte)int.Parse(sc.settings["Console"]);
+                if (sc.settings.ContainsKey("luas"))
+                    buttons = sc.settings["luas"];
+            }
+            
             cSettings = new bool[] { Convert.ToBoolean(settings & 0x1), Convert.ToBoolean(settings & 0x2), Convert.ToBoolean(settings & 0x4), Convert.ToBoolean(settings & 0x8), Convert.ToBoolean(settings & 0x10), Convert.ToBoolean(settings & 0x20), Convert.ToBoolean(settings & 0x40) };
             
             // -- Custom buttons...
 
-            string buttons = (string)rc.GetSetting("SH", "D3 GUI", "luas", "");
 
             if (buttons == "")
                 return;
@@ -801,12 +894,24 @@ namespace D3_Classicube_Gui {
         }
         public void saveSettings() {
             // -- Save bot settings
-            RegistryControl rc = new RegistryControl();
+            settingsReader rc;
+
+            if (!File.Exists("GUI.ini"))
+                rc = new settingsReader("GUI.ini", true);
+            else {
+                rc = new settingsReader("GUI.ini");
+                rc.readSettings();
+            }
 
             byte[] settings = new byte[1];
             new BitArray(cSettings).CopyTo(settings, 0);
 
-            rc.SaveSetting("SH", "D3 GUI", "Console", settings[0].ToString());
+            if (!rc.settings.ContainsKey("Console"))
+                rc.settings.Add("Console", settings[0].ToString());
+            else
+                rc.settings["Console"] = settings[0].ToString();
+
+            rc.saveSettings();
 
             // -- Save server settings.
 
@@ -1172,7 +1277,13 @@ namespace D3_Classicube_Gui {
             btnMapRez.Enabled = false;
         }
         private void loadMapConfig(Map map) {
-            StreamReader fileReader = new StreamReader(map.mapDirectory + "Config.txt");
+            StreamReader fileReader;
+            try {
+                 fileReader = new StreamReader(map.mapDirectory + "Config.txt");
+            } catch {
+                return;
+            }
+            
             string line = "";
             do {
                 line = fileReader.ReadLine();
@@ -1261,7 +1372,6 @@ namespace D3_Classicube_Gui {
             sw.Close();
         }
         private delegate void p_handleMessage(object sender, DataReceivedEventArgs args);
-
         private void handleMessage(object sender, DataReceivedEventArgs args) {
             if (this.InvokeRequired) {
                 this.Invoke(new p_handleMessage(handleMessage), sender, args);
@@ -1323,10 +1433,17 @@ namespace D3_Classicube_Gui {
             }
             if (removing == true) {
                 removing = false;
-                RegistryControl rc = new RegistryControl();
-                string oldString = (string)rc.GetSetting("SH", "D3 GUI", "luas", "");
+                settingsReader sc = new settingsReader("GUI.ini");
+                sc.readSettings();
+
+                string oldString = "";
+                if (sc.settings.ContainsKey("luas"))
+                    oldString = sc.settings["luas"];
+
                 oldString = oldString.Replace(clicked.Text + "," + fileName + "|", "");
-                rc.SaveSetting("SH", "D3 GUI", "luas", oldString);
+                sc.settings["luas"] = oldString;
+                sc.saveSettings();
+
                 this.Controls.Remove(clicked);
                 tabPage9.Controls.Remove(clicked);
                 clicked.Dispose();
@@ -1382,6 +1499,255 @@ namespace D3_Classicube_Gui {
         }
         #endregion
         #region Text Changed
+        #region Ranks Tab
+        private void boxRName_TextChanged(object sender, EventArgs e) {
+            if (currentRank != null)
+                currentRank.name = boxRName.Text;
+        }
+        private void boxRPrefix_TextChanged(object sender, EventArgs e) {
+            if (currentRank != null)
+                currentRank.prefix = boxRPrefix.Text;
+        }
+        private void chkIsOp_CheckedChanged(object sender, EventArgs e) {
+
+            if (currentRank != null) {
+                if (chkIsOp.Checked)
+                    currentRank.onclient = "100";
+                else
+                    currentRank.onclient = "0";
+            }
+        }
+        private void boxRank_TextChanged(object sender, EventArgs e) {
+            if (currentRank != null)
+                currentRank.number = boxRank.Text;
+        }
+        private void boxRSuffix_TextChanged(object sender, EventArgs e) {
+            if (currentRank != null)
+                currentRank.suffix = boxRSuffix.Text;
+        }
+        #endregion
+        #region Worlds tab
+        private void boxBuildRank_TextChanged(object sender, EventArgs e) {
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Set_Rank_Build(" + thisMap.mapID + ", " + boxBuildRank.Text + ")");
+            fileWriter.Close();
+        }
+        private void boxJoinRank_TextChanged(object sender, EventArgs e) {
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Set_Rank_Join(" + thisMap.mapID + ", " + boxJoinRank.Text + ")");
+            fileWriter.Close();
+        }
+        private void boxVisrank_TextChanged(object sender, EventArgs e) {
+            Map thisMap = null;
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Set_Rank_Show(" + thisMap.mapID + ", " + boxVisrank.Text + ")");
+            fileWriter.Close();
+        }
+
+        #endregion
+        #region Commands Tab
+        private void boxCommand_TextChanged(object sender, EventArgs e) {
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == (string)lstCmd.SelectedItem) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+            myCommand.Name = boxCommand.Text;
+
+            if (myCommand.Name != (String)lstCmd.SelectedItem) {
+                lstCmd.Items.Clear();
+                foreach (Command b in commands) {
+                    lstCmd.Items.Add(b.Name);
+                }
+                lstCmd.SelectedItem = myCommand.Name;
+            }
+        }
+        private void boxCRank_TextChanged(object sender, EventArgs e) {
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == (string)lstCmd.SelectedItem) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+            myCommand.rank = boxCRank.Text;
+        }
+        private void boxShowRank_TextChanged(object sender, EventArgs e) {
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == (string)lstCmd.SelectedItem) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+            myCommand.rankShow = boxShowRank.Text;
+        }
+        private void boxPlugin_TextChanged(object sender, EventArgs e) {
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == (string)lstCmd.SelectedItem) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+            myCommand.plugin = boxPlugin.Text;
+        }
+        private void boxGroup_TextChanged(object sender, EventArgs e) {
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == (string)lstCmd.SelectedItem) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+            myCommand.group = boxGroup.Text;
+        }
+        private void boxDescript_TextChanged(object sender, EventArgs e) {
+            Command myCommand = null;
+            foreach (Command c in commands) {
+                if (c.Name == (string)lstCmd.SelectedItem) {
+                    myCommand = c;
+                    break;
+                }
+            }
+            if (myCommand == null)
+                return;
+            myCommand.description = boxDescript.Text;
+        }
+        #endregion
+        #region Blocks Tab
+        private void boxBName_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.blockName = boxBName.Text;
+                    if (b.blockName != (string)lstBlock.SelectedItem) {
+                        lstBlock.Items.Clear();
+                        foreach (Block c in blocks) {
+                            lstBlock.Items.Add(c.blockName);
+                        }
+                        lstBlock.SelectedItem = b.blockName;
+                        break;
+                    }
+                }
+            }
+        }
+        private void boxBID_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.clientID = boxBID.Text;
+                    break;
+                }
+            }
+        }
+        private void boxCPlugin_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.createPlugin = boxCPlugin.Text;
+                    break;
+                }
+            }
+        }
+        private void boxDPlugin_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.delPlugin = boxDPlugin.Text;
+                    break;
+                }
+            }
+        }
+        private void boxRankPlace_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.rankPlace = boxRankPlace.Text;
+                    break;
+                }
+            }
+        }
+        private void boxRankDelete_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.rankDelete = boxRankDelete.Text;
+                    break;
+                }
+            }
+        }
+        private void boxPDelay_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.doTime = boxPDelay.Text;
+                    break;
+                }
+            }
+        }
+        private void boxPhysRand_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.doTimeRandom = boxPhysRand.Text;
+                    break;
+                }
+            }
+        }
+        private void boxPPlugin_TextChanged(object sender, EventArgs e) {
+            if ((string)lstBlock.SelectedItem == "--Reserved--")
+                return;
+            foreach (Block b in blocks) {
+                if (b.blockName == (string)lstBlock.SelectedItem) {
+                    b.physicPlugin = boxPPlugin.Text;
+                    break;
+                }
+            }
+        }
+
+        #endregion
+        #region Index Changed
         private void lstMaps_SelectedIndexChanged(object sender, EventArgs e) {
             btnUnloadMap.Enabled = true;
             btnDeleteMap.Enabled = true;
@@ -1423,48 +1789,6 @@ namespace D3_Classicube_Gui {
                 }
             }
         }
-
-
-        private void boxBuildRank_TextChanged(object sender, EventArgs e) {
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Rank_Build(" + thisMap.mapID + ", " + boxBuildRank.Text + ")");
-            fileWriter.Close();
-        }
-
-
-        private void boxJoinRank_TextChanged(object sender, EventArgs e) {
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Rank_Join(" + thisMap.mapID + ", " + boxJoinRank.Text + ")");
-            fileWriter.Close();
-        }
-
-        private void boxVisrank_TextChanged(object sender, EventArgs e) {
-            Map thisMap = null;
-            foreach (Map m in maps) {
-                if (m.mapName == (string)lstMaps.SelectedItem) {
-                    thisMap = m;
-                    break;
-                }
-            }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Rank_Show(" + thisMap.mapID + ", " + boxVisrank.Text + ")");
-            fileWriter.Close();
-        }
-
         private void dropOverType_SelectedIndexChanged(object sender, EventArgs e) {
             Map thisMap = null;
             foreach (Map m in maps) {
@@ -1482,7 +1806,6 @@ namespace D3_Classicube_Gui {
             }
             saveMapSettings(thisMap);
         }
-
         private void dropPhysStop_SelectedIndexChanged(object sender, EventArgs e) {
             Map thisMap = null;
             foreach (Map m in maps) {
@@ -1501,7 +1824,6 @@ namespace D3_Classicube_Gui {
             fileWriter.WriteLine("Map_Action_Add_Load(" + thisMap.mapID + ", " + thisMap.mapName + ")");
             fileWriter.Close();
         }
-
         private void numInterval_ValueChanged(object sender, EventArgs e) {
             Map thisMap = null;
             foreach (Map m in maps) {
@@ -1530,30 +1852,6 @@ namespace D3_Classicube_Gui {
             }
 
         }
-
-        private void pictureBox2_Click(object sender, EventArgs e) {
-            colorDialog1.Color = picOColor.BackColor;
-            DialogResult d = colorDialog1.ShowDialog();
-            if (d == System.Windows.Forms.DialogResult.OK) {
-                Color newColor = colorDialog1.Color;
-                picOColor.BackColor = newColor;
-                int decValue = newColor.B;
-                string hex = "";
-                hex += string.Format("{0:x}", decValue).PadLeft(2, '0');
-                decValue = newColor.G; hex += string.Format("{0:x}", decValue).PadLeft(2, '0');
-                decValue = newColor.R; hex += string.Format("{0:x}", decValue).PadLeft(2, '0');
-
-                long d3Number = Convert.ToInt64(hex, 16);
-                foreach (Block b in blocks) {
-                    if (b.blockName == (string)lstBlock.SelectedItem) {
-                        b.overviewColor = d3Number.ToString();
-                        break;
-                    }
-                }
-            }
-
-        }
-
         private void lstBlock_SelectedIndexChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
                 return;
@@ -1626,47 +1924,6 @@ namespace D3_Classicube_Gui {
                 }
             }
         }
-
-        private void boxBName_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.blockName = boxBName.Text;
-                    if (b.blockName != (string)lstBlock.SelectedItem) {
-                        lstBlock.Items.Clear();
-                        foreach (Block c in blocks) {
-                            lstBlock.Items.Add(c.blockName);
-                        }
-                        lstBlock.SelectedItem = b.blockName;
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void boxBID_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.clientID = boxBID.Text;
-                    break;
-                }
-            }
-        }
-
-        private void boxCPlugin_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.createPlugin = boxCPlugin.Text;
-                    break;
-                }
-            }
-        }
-
         private void chkTransparent_CheckedChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
                 return;
@@ -1674,45 +1931,12 @@ namespace D3_Classicube_Gui {
                 if (b.blockName == (string)lstBlock.SelectedItem) {
                     if (b.overviewColor != "-1" && chkTransparent.Checked == true) {
                         b.overviewColor = "-1";
+                        picOColor.BackColor = Color.White;
                     }
                     break;
                 }
             }
         }
-
-        private void boxDPlugin_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.delPlugin = boxDPlugin.Text;
-                    break;
-                }
-            }
-        }
-
-        private void boxRankPlace_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.rankPlace = boxRankPlace.Text;
-                    break;
-                }
-            }
-        }
-
-        private void boxRankDelete_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.rankDelete = boxRankDelete.Text;
-                    break;
-                }
-            }
-        }
-
         private void dropKills_SelectedIndexChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
                 return;
@@ -1725,7 +1949,6 @@ namespace D3_Classicube_Gui {
                 }
             }
         }
-
         private void dropSpecial_SelectedIndexChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
                 return;
@@ -1738,7 +1961,6 @@ namespace D3_Classicube_Gui {
                 }
             }
         }
-
         private void dropPhysics_SelectedIndexChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
                 return;
@@ -1765,40 +1987,6 @@ namespace D3_Classicube_Gui {
                 }
             }
         }
-
-        private void boxPDelay_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.doTime = boxPDelay.Text;
-                    break;
-                }
-            }
-        }
-
-        private void boxPhysRand_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.doTimeRandom = boxPhysRand.Text;
-                    break;
-                }
-            }
-        }
-
-        private void boxPPlugin_TextChanged(object sender, EventArgs e) {
-            if ((string)lstBlock.SelectedItem == "--Reserved--")
-                return;
-            foreach (Block b in blocks) {
-                if (b.blockName == (string)lstBlock.SelectedItem) {
-                    b.physicPlugin = boxPPlugin.Text;
-                    break;
-                }
-            }
-        }
-
         private void dropMaploadPhys_SelectedIndexChanged(object sender, EventArgs e) {
             if ((string)lstBlock.SelectedItem == "--Reserved--")
                 return;
@@ -1812,223 +2000,40 @@ namespace D3_Classicube_Gui {
                 }
             }
         }
-        private void boxCommand_TextChanged(object sender, EventArgs e) {
-            Command myCommand = null;
+        private void lstCmd_SelectedIndexChanged(object sender, EventArgs e) {
             foreach (Command c in commands) {
                 if (c.Name == (string)lstCmd.SelectedItem) {
-                    myCommand = c;
-                    break;
+                    boxCommand.Text = c.Name;
+                    boxCRank.Text = c.rank;
+                    boxShowRank.Text = c.rankShow;
+                    boxPlugin.Text = c.plugin;
+                    boxGroup.Text = c.group;
+                    boxDescript.Text = c.description;
+                    //break;
                 }
             }
-            if (myCommand == null)
-                return;
-            myCommand.Name = boxCommand.Text;
-
-            if (myCommand.Name != (String)lstCmd.SelectedItem) {
-                lstCmd.Items.Clear();
-                foreach (Command b in commands) {
-                    lstCmd.Items.Add(b.Name);
-                }
-                lstCmd.SelectedItem = myCommand.Name;
-            }
         }
+        private void lstRanks_SelectedIndexChanged(object sender, EventArgs e) {
+            foreach (Rank f in ranks) {
+                if (f.name == (string)lstRanks.SelectedItem) {
+                    currentRank = f;
+                    boxRName.Text = f.name;
+                    boxRPrefix.Text = f.prefix;
+                    boxRank.Text = f.number;
+                    boxRSuffix.Text = f.suffix;
 
-        private void boxCRank_TextChanged(object sender, EventArgs e) {
-            Command myCommand = null;
-            foreach (Command c in commands) {
-                if (c.Name == (string)lstCmd.SelectedItem) {
-                    myCommand = c;
-                    break;
-                }
-            }
-            if (myCommand == null)
-                return;
-            myCommand.rank = boxCRank.Text;
-        }
-
-        private void boxShowRank_TextChanged(object sender, EventArgs e) {
-            Command myCommand = null;
-            foreach (Command c in commands) {
-                if (c.Name == (string)lstCmd.SelectedItem) {
-                    myCommand = c;
-                    break;
-                }
-            }
-            if (myCommand == null)
-                return;
-            myCommand.rankShow = boxShowRank.Text;
-        }
-
-        private void boxPlugin_TextChanged(object sender, EventArgs e) {
-            Command myCommand = null;
-            foreach (Command c in commands) {
-                if (c.Name == (string)lstCmd.SelectedItem) {
-                    myCommand = c;
-                    break;
-                }
-            }
-            if (myCommand == null)
-                return;
-            myCommand.plugin = boxPlugin.Text;
-        }
-
-        private void boxGroup_TextChanged(object sender, EventArgs e) {
-            Command myCommand = null;
-            foreach (Command c in commands) {
-                if (c.Name == (string)lstCmd.SelectedItem) {
-                    myCommand = c;
-                    break;
-                }
-            }
-            if (myCommand == null)
-                return;
-            myCommand.group = boxGroup.Text;
-        }
-
-        private void boxDescript_TextChanged(object sender, EventArgs e) {
-            Command myCommand = null;
-            foreach (Command c in commands) {
-                if (c.Name == (string)lstCmd.SelectedItem) {
-                    myCommand = c;
-                    break;
-                }
-            }
-            if (myCommand == null)
-                return;
-            myCommand.description = boxDescript.Text;
-        }
-
-        private void boxRName_TextChanged(object sender, EventArgs e) {
-            if (currentRank != null)
-                 currentRank.name = boxRName.Text;
-        }
-
-        private void boxRPrefix_TextChanged(object sender, EventArgs e) {
-            if (currentRank != null)
-                currentRank.prefix = boxRPrefix.Text;
-        }
-
-        private void chkIsOp_CheckedChanged(object sender, EventArgs e) {
-
-                if (currentRank != null) {
-                    if (chkIsOp.Checked)
-                        currentRank.onclient = "100";
+                    if (f.onclient == "100")
+                        chkIsOp.Checked = true;
                     else
-                        currentRank.onclient = "0";
+                        chkIsOp.Checked = false;
+                    break;
                 }
-        }
-
-        private void boxRank_TextChanged(object sender, EventArgs e) {
-            if (currentRank != null)
-                currentRank.number = boxRank.Text;
+            }
         }
         #endregion
+        #region Other
 
-        private void btnSavePreview_Click(object sender, EventArgs e) {
-            SaveFileDialog sd = new SaveFileDialog();
-            sd.Filter = "PNG Image | *.png";
-            DialogResult dr = sd.ShowDialog();
-
-            if (dr == System.Windows.Forms.DialogResult.OK) 
-                picOverview.Image.Save(sd.FileName);
-            
-        }
-
-        private void boxRSuffix_TextChanged(object sender, EventArgs e) {
-            if (currentRank != null)
-                currentRank.suffix = boxRSuffix.Text;
-        }
-
-        private void setRankToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string answer = Microsoft.VisualBasic.Interaction.InputBox("What rank do you wish to set this player to? (-32767-32767)", "Set Rank","100");
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Set_Rank(Entity_Get_Player(Client_Get_Entity(" + eid + ")), " + answer + ")");
-            fileWriter.Close();
-        }
-
-        private void kickToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a kick message", "Kick Player", "Kicked by Console");
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Kick(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\", 1, 1, 1)");
-            fileWriter.Close();
-        }
-
-        private void banToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a ban message", "Ban Player", "Banned by Console");
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Ban(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\")");
-            fileWriter.Close();
-        }
-
-        private void stopToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a reason for stopping this player.", "Stop Player", "Stopped by Console");
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Stop(Entity_Get_Player(Client_Get_Entity(" + eid + ")), \"" + answer + "\")");
-            fileWriter.Close();
-        }
-
-        private void unstopToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Unstop(Entity_Get_Player(Client_Get_Entity(" + eid + ")))");
-            fileWriter.Close();
-        }
-
-        private void muteToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string answer = Microsoft.VisualBasic.Interaction.InputBox("Please enter a duration to mute in minutes (0 for indefinate)", "Mute Player", "30");
-            string answer2 = Microsoft.VisualBasic.Interaction.InputBox("Please enter a mute message", "Mute Player", "Muted by Console");
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Mute(Entity_Get_Player(Client_Get_Entity(" + eid + ")), " + answer + ", \"" + answer2 + "\")");
-            fileWriter.Close();
-        }
-
-        private void unmuteToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
-                return;
-
-            string selected = lstPlayers.SelectedItem.ToString();
-            string eid = selected.Substring(selected.IndexOf(":") + 1, selected.Length - (selected.IndexOf(":") + 1));
-
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Player_Unmute(Entity_Get_Player(Client_Get_Entity(" + eid + ")))");
-            fileWriter.Close();
-        }
-
-
+        #endregion
+        #endregion
     }
 }

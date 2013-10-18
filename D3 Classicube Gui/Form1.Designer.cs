@@ -1467,7 +1467,7 @@
             this.lblInfo.Size = new System.Drawing.Size(177, 78);
             this.lblInfo.TabIndex = 5;
             this.lblInfo.Text = "Server Software by: Dadido3\r\n\r\nServer software written in PureBasic\r\nGUI written " +
-    "in C#\r\n\r\nv1.0.5";
+    "in C#\r\n\r\nv1.0.6";
             // 
             // lblUmby
             // 
@@ -1766,7 +1766,7 @@
             // 
             this.btnTray.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTray.Location = new System.Drawing.Point(3, 174);
+            this.btnTray.Location = new System.Drawing.Point(0, 174);
             this.btnTray.Name = "btnTray";
             this.btnTray.Size = new System.Drawing.Size(211, 23);
             this.btnTray.TabIndex = 6;
