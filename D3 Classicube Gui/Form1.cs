@@ -34,6 +34,7 @@ namespace D3_Classicube_Gui {
         #region Server Settings
         string lastHeartbeat = "";
         int online = 0;
+        public string serverVersion = "1004";
         string serverName = "";
         string motd = "";
         string welcomeMessage = "";
@@ -558,6 +559,12 @@ namespace D3_Classicube_Gui {
                     SW.WriteLine("Color_Overview = " + b.overviewColor);
                     if (b.RBL != "" && b.RBL != null)
                         SW.WriteLine("Replace_By_Load = " + b.RBL);
+                    if (b.CPE_Level != "" && b.CPE_Level != null)
+                        SW.WriteLine("CPE_Level = " + b.CPE_Level);
+
+                    if (b.CPE_Replace != "" && b.CPE_Replace != null)
+                        SW.WriteLine("CPE_Replace = " + b.CPE_Replace);
+
                     SW.WriteLine("");
                 } else {
                     SW.WriteLine("[" + b.internalID + "]");
@@ -733,7 +740,7 @@ namespace D3_Classicube_Gui {
                 return;
             switch (parts[1].Replace(" ", "")) {
                 case "Chat.pbi":
-                    if ((parts[2].Replace(" ", "") == "36"  || parts[2].Replace(" ","") == "75") && cSettings[1] == true) {
+                    if ((parts[2].Replace(" ", "") == "41"  || parts[2].Replace(" ","") == "86") && cSettings[1] == true) {
                         putMessage(parts[3].Replace(" Chat: ", ""));
                     }
                     break;
@@ -753,12 +760,12 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Command.pbi":
-                    if (parts[2].Replace(" ", "") == "2238" && cSettings[2] == true) {
+                    if (parts[2].Replace(" ", "") == "2247" && cSettings[2] == true) {
                         putMessage(parts[3].Replace(" Command: ", ""));
                     }
                     break;
                 case "Client.pbi":
-                    if ((parts[2].Replace(" ", "") == "88" || parts[2].Replace(" ", "") == "119") && cSettings[4] == true) {
+                    if ((parts[2].Replace(" ", "") == "88" || parts[2].Replace(" ", "") == "121") && cSettings[4] == true) {
                         string name = parts[3].Substring(parts[3].IndexOf("'") + 1, parts[3].IndexOf("'",parts[3].IndexOf("'") + 1) - (parts[3].IndexOf("'") + 1));
 
                         if (parts[3].Contains("logged in")) {
@@ -781,10 +788,10 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Network.pbi":
-                    if (parts[2].Replace(" ", "") == "83") {
+                    if (parts[2].Replace(" ", "") == "84") {
                         putMessage("WARNING: Unable to start server networking! Make sure there are no port conflicts.");
                     }
-                    if (parts[2].Replace(" ", "") == "234") {
+                    if (parts[2].Replace(" ", "") == "235") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         tempEID = Entity_ID.Replace(" ","");
@@ -794,6 +801,8 @@ namespace D3_Classicube_Gui {
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         lstPlayers.Items.Remove(tempEID + ":" + Entity_ID); // -- Fixed bug
                         tempEID = Entity_ID.Replace(" ","");
+                        online -= 1;
+                        lblPlayers.Text = "Players: " + online.ToString();
                     }
                     break;
                 case "Lua.pbi":
@@ -873,6 +882,8 @@ namespace D3_Classicube_Gui {
                     settings = (byte)int.Parse(sc.settings["Console"]);
                 if (sc.settings.ContainsKey("luas"))
                     buttons = sc.settings["luas"];
+                if (sc.settings.ContainsKey("server"))
+                    serverVersion = sc.settings["server"];
             }
             
             cSettings = new bool[] { Convert.ToBoolean(settings & 0x1), Convert.ToBoolean(settings & 0x2), Convert.ToBoolean(settings & 0x4), Convert.ToBoolean(settings & 0x8), Convert.ToBoolean(settings & 0x10), Convert.ToBoolean(settings & 0x20), Convert.ToBoolean(settings & 0x40) };
@@ -910,6 +921,11 @@ namespace D3_Classicube_Gui {
                 rc.settings.Add("Console", settings[0].ToString());
             else
                 rc.settings["Console"] = settings[0].ToString();
+
+            if (!rc.settings.ContainsKey("server"))
+                rc.settings.Add("server", serverVersion);
+            else
+                rc.settings["server"] = serverVersion;
 
             rc.saveSettings();
 
@@ -1115,6 +1131,8 @@ namespace D3_Classicube_Gui {
             string special = "";
             string overviewColor = "";
             string RBL = "";
+            string CPE_Level = "";
+            string CPE_Replace = "";
 
             do {
                 line = fileReader.ReadLine();
@@ -1128,6 +1146,11 @@ namespace D3_Classicube_Gui {
                             blocks.Add(new Block(internalID, blockName, clientID, physic, physicPlugin, doTime, doTimeRandom, doRepeat, dobyLoad, createPlugin, delPlugin, rankPlace, rankDelete, afterDelete, killer, special, overviewColor));
                         if (RBL != "") 
                             blocks[blocks.Count - 1].RBL = RBL;
+                        if (CPE_Level != "")
+                            blocks[blocks.Count - 1].CPE_Level = CPE_Level;
+
+                        if (CPE_Replace != "")
+                            blocks[blocks.Count - 1].CPE_Replace = CPE_Replace;
 
                         blockName = "";
                         clientID = "";
@@ -1146,6 +1169,8 @@ namespace D3_Classicube_Gui {
                         special = "";
                         overviewColor = "";
                         RBL = "";
+                        CPE_Level = "";
+                        CPE_Replace = "";
                     }
                     internalID = line.Substring(1, line.IndexOf("]") - 1);
                 } else if (line.Contains("=")) {
@@ -1158,6 +1183,12 @@ namespace D3_Classicube_Gui {
                                  blockName = "--Reserved--";
                             RBL = value;
                             
+                             break;
+                        case "CPE_Level":
+                             CPE_Level = value;
+                             break;
+                        case "CPE_Replace":
+                             CPE_Replace = value;
                              break;
                         case "Name":
                             blockName = value;
@@ -1483,6 +1514,7 @@ namespace D3_Classicube_Gui {
             Updater ud = new Updater();
             ud.mainForm = this;
             ud.checkUpdates();
+            ud.checkUpdatesServer(serverVersion);
         }
         private void Form1_Closing(object sender, FormClosingEventArgs e) {
             try {

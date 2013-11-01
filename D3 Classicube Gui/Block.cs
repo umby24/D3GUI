@@ -24,6 +24,8 @@ namespace D3_Classicube_Gui {
         public string special;
         public string overviewColor;
         public string RBL;
+        public string CPE_Replace;
+        public string CPE_Level;
 
         public Block(string IID, string bname, string cid, string physics, string pPlug, string dtime, string dtrand, string drep, string dload, string cplug, string dplug, string rplace, string rdel, string adel, string kill, string spec, string overview) {
             internalID = IID;

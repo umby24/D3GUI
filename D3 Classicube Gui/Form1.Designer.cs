@@ -1464,10 +1464,10 @@
             this.lblInfo.AutoSize = true;
             this.lblInfo.Location = new System.Drawing.Point(8, 73);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(177, 78);
+            this.lblInfo.Size = new System.Drawing.Size(188, 78);
             this.lblInfo.TabIndex = 5;
-            this.lblInfo.Text = "Server Software by: Dadido3\r\n\r\nServer software written in PureBasic\r\nGUI written " +
-    "in C#\r\n\r\nv1.0.6";
+            this.lblInfo.Text = "Server Software by: Dadido3, Umby24\r\n\r\nServer software written in PureBasic\r\nGUI " +
+    "written in C#\r\n\r\nv1.0.7";
             // 
             // lblUmby
             // 
