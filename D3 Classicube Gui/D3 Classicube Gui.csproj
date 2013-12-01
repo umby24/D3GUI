@@ -206,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="D3.ico" />
+    <None Include="Resources\128.png" />
     <None Include="Resources\minecraft color chart.png" />
     <None Include="Resources\Colors.PNG" />
   </ItemGroup>

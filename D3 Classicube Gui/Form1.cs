@@ -37,6 +37,7 @@ namespace D3_Classicube_Gui {
         public string serverVersion = "1004";
         string serverName = "";
         string motd = "";
+        string clickDistance = "";
         string welcomeMessage = "";
         string maxPlayers = "0";
         byte nameVerify = 0;
@@ -760,12 +761,12 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Command.pbi":
-                    if (parts[2].Replace(" ", "") == "2247" && cSettings[2] == true) {
+                    if (parts[2].Replace(" ", "") == "2263" && cSettings[2] == true) {
                         putMessage(parts[3].Replace(" Command: ", ""));
                     }
                     break;
                 case "Client.pbi":
-                    if ((parts[2].Replace(" ", "") == "88" || parts[2].Replace(" ", "") == "121") && cSettings[4] == true) {
+                    if ((parts[2].Replace(" ", "") == "88" || parts[2].Replace(" ", "") == "177") && cSettings[4] == true) {
                         string name = parts[3].Substring(parts[3].IndexOf("'") + 1, parts[3].IndexOf("'",parts[3].IndexOf("'") + 1) - (parts[3].IndexOf("'") + 1));
 
                         if (parts[3].Contains("logged in")) {
@@ -781,7 +782,7 @@ namespace D3_Classicube_Gui {
                                 online -= 1;
                             }
                         }
-                        lblPlayers.Text = "Players: " + online.ToString();
+                        lblPlayers.Text = "Players: " + lstPlayers.Items.Count.ToString();
                         if (mini) {
                             mf.lblOnline.Text = online + "/" + maxPlayers;
                         }
@@ -801,8 +802,7 @@ namespace D3_Classicube_Gui {
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         lstPlayers.Items.Remove(tempEID + ":" + Entity_ID); // -- Fixed bug
                         tempEID = Entity_ID.Replace(" ","");
-                        online -= 1;
-                        lblPlayers.Text = "Players: " + online.ToString();
+                        lblPlayers.Text = "Players: " + lstPlayers.Items.Count.ToString();
                     }
                     break;
                 case "Lua.pbi":
@@ -841,6 +841,9 @@ namespace D3_Classicube_Gui {
                         case "MOTD":
                             motd = data;
                             break;
+                        case "Click_Distance":
+                            clickDistance = data;
+                            break;
                         case "Message_Welcome":
                             welcomeMessage = data;
                             break;
@@ -867,6 +870,7 @@ namespace D3_Classicube_Gui {
             boxSName.Text = serverName;
             boxLogin.Text = welcomeMessage;
             boxPort.Text = port;
+            txtClickDistance.Text = clickDistance;
 
             chkNameVerif.Checked = BitConverter.ToBoolean(new byte[] { nameVerify }, 0);
             chkPub.Checked = BitConverter.ToBoolean(new byte[] { pub }, 0);
@@ -954,6 +958,9 @@ namespace D3_Classicube_Gui {
                             break;
                         case "MOTD":
                             myLine = "MOTD = " + boxMOTD.Text;
+                            break;
+                        case "Click_Distance":
+                            myLine = "Click_Distance = " + txtClickDistance.Text;
                             break;
                         case "Message_Welcome":
                             myLine = "Message_Welcome = " + boxLogin.Text;

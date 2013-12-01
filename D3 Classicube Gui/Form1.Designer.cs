@@ -53,7 +53,6 @@
             this.btnBRevert = new System.Windows.Forms.Button();
             this.btnBSave = new System.Windows.Forms.Button();
             this.chkTransparent = new System.Windows.Forms.CheckBox();
-            this.picOColor = new System.Windows.Forms.PictureBox();
             this.lblOColor = new System.Windows.Forms.Label();
             this.dropSpecial = new System.Windows.Forms.ComboBox();
             this.dropKills = new System.Windows.Forms.ComboBox();
@@ -119,12 +118,10 @@
             this.btnUnloadMap = new System.Windows.Forms.Button();
             this.btnAddMap = new System.Windows.Forms.Button();
             this.lstMaps = new System.Windows.Forms.ListBox();
-            this.picOverview = new System.Windows.Forms.PictureBox();
             this.tabPage10 = new System.Windows.Forms.TabPage();
             this.boxRSuffix = new System.Windows.Forms.TextBox();
             this.lblSuffix = new System.Windows.Forms.Label();
             this.btnRevert = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.boxRank = new System.Windows.Forms.TextBox();
             this.lblRank = new System.Windows.Forms.Label();
             this.chkIsOp = new System.Windows.Forms.CheckBox();
@@ -175,6 +172,8 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtClickDistance = new System.Windows.Forms.TextBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.chkNameVerif = new System.Windows.Forms.CheckBox();
             this.chkPub = new System.Windows.Forms.CheckBox();
@@ -191,17 +190,18 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.picOverview = new System.Windows.Forms.PictureBox();
+            this.picOColor = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).BeginInit();
             this.tabPage12.SuspendLayout();
             this.tabPage11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).BeginInit();
             this.tabPage10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.tabPage9.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -215,6 +215,10 @@
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -303,7 +307,6 @@
             this.tabPage14.Controls.Add(this.btnBRevert);
             this.tabPage14.Controls.Add(this.btnBSave);
             this.tabPage14.Controls.Add(this.chkTransparent);
-            this.tabPage14.Controls.Add(this.picOColor);
             this.tabPage14.Controls.Add(this.lblOColor);
             this.tabPage14.Controls.Add(this.dropSpecial);
             this.tabPage14.Controls.Add(this.dropKills);
@@ -324,6 +327,7 @@
             this.tabPage14.Controls.Add(this.lblIID);
             this.tabPage14.Controls.Add(this.btnRemBlock);
             this.tabPage14.Controls.Add(this.btnAddBlock);
+            this.tabPage14.Controls.Add(this.picOColor);
             this.tabPage14.Controls.Add(this.lstBlock);
             this.tabPage14.Location = new System.Drawing.Point(4, 22);
             this.tabPage14.Name = "tabPage14";
@@ -514,16 +518,6 @@
             this.chkTransparent.Text = "Transparent";
             this.chkTransparent.UseVisualStyleBackColor = true;
             this.chkTransparent.CheckedChanged += new System.EventHandler(this.chkTransparent_CheckedChanged);
-            // 
-            // picOColor
-            // 
-            this.picOColor.Location = new System.Drawing.Point(229, 75);
-            this.picOColor.Name = "picOColor";
-            this.picOColor.Size = new System.Drawing.Size(20, 20);
-            this.picOColor.TabIndex = 46;
-            this.picOColor.TabStop = false;
-            this.toolTip1.SetToolTip(this.picOColor, "The color of the block in map previews");
-            this.picOColor.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // lblOColor
             // 
@@ -1247,23 +1241,11 @@
             this.lstMaps.TabIndex = 1;
             this.lstMaps.SelectedIndexChanged += new System.EventHandler(this.lstMaps_SelectedIndexChanged);
             // 
-            // picOverview
-            // 
-            this.picOverview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picOverview.Location = new System.Drawing.Point(452, 3);
-            this.picOverview.Name = "picOverview";
-            this.picOverview.Size = new System.Drawing.Size(309, 261);
-            this.picOverview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picOverview.TabIndex = 0;
-            this.picOverview.TabStop = false;
-            // 
             // tabPage10
             // 
             this.tabPage10.Controls.Add(this.boxRSuffix);
             this.tabPage10.Controls.Add(this.lblSuffix);
             this.tabPage10.Controls.Add(this.btnRevert);
-            this.tabPage10.Controls.Add(this.pictureBox1);
             this.tabPage10.Controls.Add(this.boxRank);
             this.tabPage10.Controls.Add(this.lblRank);
             this.tabPage10.Controls.Add(this.chkIsOp);
@@ -1274,6 +1256,7 @@
             this.tabPage10.Controls.Add(this.btnSaveRanks);
             this.tabPage10.Controls.Add(this.btnRemRank);
             this.tabPage10.Controls.Add(this.btnAddRank);
+            this.tabPage10.Controls.Add(this.pictureBox1);
             this.tabPage10.Controls.Add(this.lstRanks);
             this.tabPage10.Location = new System.Drawing.Point(4, 22);
             this.tabPage10.Name = "tabPage10";
@@ -1310,18 +1293,6 @@
             this.toolTip1.SetToolTip(this.btnRevert, "Revert all changes to the ranks file on disk");
             this.btnRevert.UseVisualStyleBackColor = true;
             this.btnRevert.Click += new System.EventHandler(this.btnRevert_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Image = global::D3_Classicube_Gui.Properties.Resources.minecraft_color_chart;
-            this.pictureBox1.Location = new System.Drawing.Point(324, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(445, 264);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 11;
-            this.pictureBox1.TabStop = false;
             // 
             // boxRank
             // 
@@ -1437,6 +1408,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.pictureBox2);
             this.tabPage2.Controls.Add(this.btnLuaApi);
             this.tabPage2.Controls.Add(this.lblInfo);
             this.tabPage2.Controls.Add(this.lblUmby);
@@ -1467,12 +1439,12 @@
             this.lblInfo.Size = new System.Drawing.Size(188, 78);
             this.lblInfo.TabIndex = 5;
             this.lblInfo.Text = "Server Software by: Dadido3, Umby24\r\n\r\nServer software written in PureBasic\r\nGUI " +
-    "written in C#\r\n\r\nv1.0.7";
+    "written in C#\r\n\r\nv1.0.9";
             // 
             // lblUmby
             // 
             this.lblUmby.AutoSize = true;
-            this.lblUmby.Location = new System.Drawing.Point(539, 73);
+            this.lblUmby.Location = new System.Drawing.Point(696, 133);
             this.lblUmby.Name = "lblUmby";
             this.lblUmby.Size = new System.Drawing.Size(63, 13);
             this.lblUmby.TabIndex = 4;
@@ -1856,6 +1828,8 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.label1);
+            this.tabPage4.Controls.Add(this.txtClickDistance);
             this.tabPage4.Controls.Add(this.btnSave);
             this.tabPage4.Controls.Add(this.chkNameVerif);
             this.tabPage4.Controls.Add(this.chkPub);
@@ -1876,6 +1850,23 @@
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "     Settings     ";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(127, 160);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 13);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "Click Distance:";
+            // 
+            // txtClickDistance
+            // 
+            this.txtClickDistance.Location = new System.Drawing.Point(151, 179);
+            this.txtClickDistance.Name = "txtClickDistance";
+            this.txtClickDistance.Size = new System.Drawing.Size(54, 20);
+            this.txtClickDistance.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.txtClickDistance, "32 per block, 160 is default.");
             // 
             // btnSave
             // 
@@ -1912,7 +1903,7 @@
             // 
             // boxPort
             // 
-            this.boxPort.Location = new System.Drawing.Point(138, 133);
+            this.boxPort.Location = new System.Drawing.Point(130, 133);
             this.boxPort.MaxLength = 5;
             this.boxPort.Name = "boxPort";
             this.boxPort.Size = new System.Drawing.Size(67, 20);
@@ -1931,7 +1922,7 @@
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(176, 117);
+            this.lblPort.Location = new System.Drawing.Point(127, 117);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(29, 13);
             this.lblPort.TabIndex = 8;
@@ -2013,6 +2004,48 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Image = global::D3_Classicube_Gui.Properties.Resources.minecraft_color_chart;
+            this.pictureBox1.Location = new System.Drawing.Point(324, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(445, 264);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 11;
+            this.pictureBox1.TabStop = false;
+            // 
+            // picOverview
+            // 
+            this.picOverview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picOverview.Location = new System.Drawing.Point(452, 3);
+            this.picOverview.Name = "picOverview";
+            this.picOverview.Size = new System.Drawing.Size(309, 261);
+            this.picOverview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picOverview.TabIndex = 0;
+            this.picOverview.TabStop = false;
+            // 
+            // picOColor
+            // 
+            this.picOColor.Location = new System.Drawing.Point(229, 75);
+            this.picOColor.Name = "picOColor";
+            this.picOColor.Size = new System.Drawing.Size(20, 20);
+            this.picOColor.TabIndex = 46;
+            this.picOColor.TabStop = false;
+            this.toolTip1.SetToolTip(this.picOColor, "The color of the block in map previews");
+            this.picOColor.Click += new System.EventHandler(this.pictureBox2_Click);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::D3_Classicube_Gui.Properties.Resources._128;
+            this.pictureBox2.Location = new System.Drawing.Point(629, 3);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(130, 127);
+            this.pictureBox2.TabIndex = 6;
+            this.pictureBox2.TabStop = false;
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -2035,16 +2068,13 @@
             this.tabPage14.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).EndInit();
             this.tabPage12.ResumeLayout(false);
             this.tabPage12.PerformLayout();
             this.tabPage11.ResumeLayout(false);
             this.tabPage11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).EndInit();
             this.tabPage10.ResumeLayout(false);
             this.tabPage10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage9.ResumeLayout(false);
@@ -2062,6 +2092,10 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2235,6 +2269,9 @@
         private System.Windows.Forms.ToolStripMenuItem unstopToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem muteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unmuteToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtClickDistance;
+        private System.Windows.Forms.PictureBox pictureBox2;
     }
 }
 
