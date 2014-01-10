@@ -11,7 +11,7 @@ namespace D3_Classicube_Gui {
         string updateUrl = "http://umby.d3s.co/CCD3/gui";
         string fileUrl = "http://umby.d3s.co/CCD3/";
         string serverUrl = "http://umby.d3s.co/CCD3/server";
-        string thisVersion = "1.0.9";
+        string thisVersion = "1.0.12";
         string serverVersion = "";
         string thisServer = "";
         public Form1 mainForm;
@@ -87,8 +87,8 @@ namespace D3_Classicube_Gui {
         void downloader_DownloadFileCompleted_Server(object sender, System.ComponentModel.AsyncCompletedEventArgs e) {
             mainForm.updateProgress.Visible = false;
 
-            System.IO.File.Delete("Minecraft.Server.x86.exe");
-            System.IO.File.Move(thisServer + "_Server.exe", "Minecraft.Server.x86.exe");
+            System.IO.File.Delete("Minecraft-Server.x86.exe");
+            System.IO.File.Move(thisServer + "_Server.exe", "Minecraft-Server.x86.exe");
             MessageBox.Show("Update complete, You may now start your server.\n\nNOTE: You may need to download additional files for the server to fully function!\n\nVisit the website news section for details.", "Update");
         }
 

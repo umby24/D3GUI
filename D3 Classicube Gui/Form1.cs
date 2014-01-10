@@ -756,7 +756,7 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Map.pbi":
-                    if (parts[2].Replace(" ", "") == "712" && cSettings[3] == true) {
+                    if (parts[2].Replace(" ", "") == "731" && cSettings[3] == true) {
                         putMessage(parts[3].Replace(" Map: ", ""));
                     }
                     break;
@@ -789,15 +789,15 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Network.pbi":
-                    if (parts[2].Replace(" ", "") == "84") {
+                    if (parts[2].Replace(" ", "") == "83") {
                         putMessage("WARNING: Unable to start server networking! Make sure there are no port conflicts.");
                     }
-                    if (parts[2].Replace(" ", "") == "235") {
+                    if (parts[2].Replace(" ", "") == "234") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         tempEID = Entity_ID.Replace(" ","");
                     }
-                    if (parts[2].Replace(" ", "") == "252") {
+                    if (parts[2].Replace(" ", "") == "251") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         lstPlayers.Items.Remove(tempEID + ":" + Entity_ID); // -- Fixed bug

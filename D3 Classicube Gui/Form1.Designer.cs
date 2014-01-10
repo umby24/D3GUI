@@ -73,6 +73,7 @@
             this.lblIID = new System.Windows.Forms.Label();
             this.btnRemBlock = new System.Windows.Forms.Button();
             this.btnAddBlock = new System.Windows.Forms.Button();
+            this.picOColor = new System.Windows.Forms.PictureBox();
             this.lstBlock = new System.Windows.Forms.ListBox();
             this.tabPage12 = new System.Windows.Forms.TabPage();
             this.btnRemCom = new System.Windows.Forms.Button();
@@ -118,6 +119,7 @@
             this.btnUnloadMap = new System.Windows.Forms.Button();
             this.btnAddMap = new System.Windows.Forms.Button();
             this.lstMaps = new System.Windows.Forms.ListBox();
+            this.picOverview = new System.Windows.Forms.PictureBox();
             this.tabPage10 = new System.Windows.Forms.TabPage();
             this.boxRSuffix = new System.Windows.Forms.TextBox();
             this.lblSuffix = new System.Windows.Forms.Label();
@@ -132,8 +134,10 @@
             this.btnSaveRanks = new System.Windows.Forms.Button();
             this.btnRemRank = new System.Windows.Forms.Button();
             this.btnAddRank = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lstRanks = new System.Windows.Forms.ListBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.btnLuaApi = new System.Windows.Forms.Button();
             this.lblInfo = new System.Windows.Forms.Label();
             this.lblUmby = new System.Windows.Forms.Label();
@@ -190,19 +194,19 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.picOverview = new System.Windows.Forms.PictureBox();
-            this.picOColor = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).BeginInit();
             this.tabPage12.SuspendLayout();
             this.tabPage11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInterval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).BeginInit();
             this.tabPage10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.tabPage9.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl3.SuspendLayout();
@@ -215,10 +219,6 @@
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -714,6 +714,16 @@
             this.toolTip1.SetToolTip(this.btnAddBlock, "Create a new block");
             this.btnAddBlock.UseVisualStyleBackColor = true;
             this.btnAddBlock.Click += new System.EventHandler(this.btnAddBlock_Click);
+            // 
+            // picOColor
+            // 
+            this.picOColor.Location = new System.Drawing.Point(229, 75);
+            this.picOColor.Name = "picOColor";
+            this.picOColor.Size = new System.Drawing.Size(20, 20);
+            this.picOColor.TabIndex = 46;
+            this.picOColor.TabStop = false;
+            this.toolTip1.SetToolTip(this.picOColor, "The color of the block in map previews");
+            this.picOColor.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // lstBlock
             // 
@@ -1241,6 +1251,17 @@
             this.lstMaps.TabIndex = 1;
             this.lstMaps.SelectedIndexChanged += new System.EventHandler(this.lstMaps_SelectedIndexChanged);
             // 
+            // picOverview
+            // 
+            this.picOverview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picOverview.Location = new System.Drawing.Point(452, 3);
+            this.picOverview.Name = "picOverview";
+            this.picOverview.Size = new System.Drawing.Size(309, 261);
+            this.picOverview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picOverview.TabIndex = 0;
+            this.picOverview.TabStop = false;
+            // 
             // tabPage10
             // 
             this.tabPage10.Controls.Add(this.boxRSuffix);
@@ -1395,6 +1416,18 @@
             this.btnAddRank.UseVisualStyleBackColor = true;
             this.btnAddRank.Click += new System.EventHandler(this.btnAddRank_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Image = global::D3_Classicube_Gui.Properties.Resources.minecraft_color_chart;
+            this.pictureBox1.Location = new System.Drawing.Point(324, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(445, 264);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 11;
+            this.pictureBox1.TabStop = false;
+            // 
             // lstRanks
             // 
             this.lstRanks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1420,6 +1453,15 @@
             this.tabPage2.Text = "      About      ";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::D3_Classicube_Gui.Properties.Resources._128;
+            this.pictureBox2.Location = new System.Drawing.Point(629, 3);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(130, 127);
+            this.pictureBox2.TabIndex = 6;
+            this.pictureBox2.TabStop = false;
+            // 
             // btnLuaApi
             // 
             this.btnLuaApi.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1439,7 +1481,7 @@
             this.lblInfo.Size = new System.Drawing.Size(188, 78);
             this.lblInfo.TabIndex = 5;
             this.lblInfo.Text = "Server Software by: Dadido3, Umby24\r\n\r\nServer software written in PureBasic\r\nGUI " +
-    "written in C#\r\n\r\nv1.0.9";
+    "written in C#\r\n\r\nv1.0.12\r\n";
             // 
             // lblUmby
             // 
@@ -2004,48 +2046,6 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Image = global::D3_Classicube_Gui.Properties.Resources.minecraft_color_chart;
-            this.pictureBox1.Location = new System.Drawing.Point(324, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(445, 264);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 11;
-            this.pictureBox1.TabStop = false;
-            // 
-            // picOverview
-            // 
-            this.picOverview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picOverview.Location = new System.Drawing.Point(452, 3);
-            this.picOverview.Name = "picOverview";
-            this.picOverview.Size = new System.Drawing.Size(309, 261);
-            this.picOverview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picOverview.TabIndex = 0;
-            this.picOverview.TabStop = false;
-            // 
-            // picOColor
-            // 
-            this.picOColor.Location = new System.Drawing.Point(229, 75);
-            this.picOColor.Name = "picOColor";
-            this.picOColor.Size = new System.Drawing.Size(20, 20);
-            this.picOColor.TabIndex = 46;
-            this.picOColor.TabStop = false;
-            this.toolTip1.SetToolTip(this.picOColor, "The color of the block in map previews");
-            this.picOColor.Click += new System.EventHandler(this.pictureBox2_Click);
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = global::D3_Classicube_Gui.Properties.Resources._128;
-            this.pictureBox2.Location = new System.Drawing.Point(629, 3);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(130, 127);
-            this.pictureBox2.TabIndex = 6;
-            this.pictureBox2.TabStop = false;
-            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -2068,15 +2068,19 @@
             this.tabPage14.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).EndInit();
             this.tabPage12.ResumeLayout(false);
             this.tabPage12.PerformLayout();
             this.tabPage11.ResumeLayout(false);
             this.tabPage11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numInterval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).EndInit();
             this.tabPage10.ResumeLayout(false);
             this.tabPage10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.tabPage9.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabControl3.ResumeLayout(false);
@@ -2092,10 +2096,6 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picOverview)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picOColor)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
