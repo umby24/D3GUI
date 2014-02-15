@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace D3_Classicube_Gui {
     class Map {
-        public string mapID;
+        public int mapID;
         public string mapName;
         public string mapDirectory;
         public string delete;
@@ -32,7 +32,7 @@ namespace D3_Classicube_Gui {
         public string spawnrot;
         public string spawnlook;
             
-        public Map(string mid, string mname, string mdir, string del, string rel) {
+        public Map(int mid, string mname, string mdir, string del, string rel) {
             mapID = mid;
             mapName = mname;
             mapDirectory = mdir;

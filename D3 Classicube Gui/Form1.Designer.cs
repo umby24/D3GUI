@@ -1025,7 +1025,7 @@
             // 
             // btnMapReloads
             // 
-            this.btnMapReloads.Location = new System.Drawing.Point(134, 177);
+            this.btnMapReloads.Location = new System.Drawing.Point(134, 206);
             this.btnMapReloads.Name = "btnMapReloads";
             this.btnMapReloads.Size = new System.Drawing.Size(96, 23);
             this.btnMapReloads.TabIndex = 23;
@@ -1483,7 +1483,7 @@
             this.lblInfo.Size = new System.Drawing.Size(188, 78);
             this.lblInfo.TabIndex = 5;
             this.lblInfo.Text = "Server Software by: Dadido3, Umby24\r\n\r\nServer software written in PureBasic\r\nGUI " +
-    "written in C#\r\n\r\nv1.0.12\r\n";
+    "written in C#\r\n\r\nv1.0.13\r\n";
             // 
             // lblUmby
             // 
@@ -2050,7 +2050,8 @@
             // 
             // btnMapSave
             // 
-            this.btnMapSave.Location = new System.Drawing.Point(134, 206);
+            this.btnMapSave.Enabled = false;
+            this.btnMapSave.Location = new System.Drawing.Point(134, 177);
             this.btnMapSave.Name = "btnMapSave";
             this.btnMapSave.Size = new System.Drawing.Size(96, 23);
             this.btnMapSave.TabIndex = 28;

@@ -268,26 +268,36 @@ namespace D3_Classicube_Gui {
         #region Worlds Tab
         private void btnAddMap_Click(object sender, EventArgs e) {
             string name = Microsoft.VisualBasic.Interaction.InputBox("Provide a name for the new map", "New Map");
+
             if (name == "")
                 return;
+
             string size = Microsoft.VisualBasic.Interaction.InputBox("Enter a size for the new map", "New Map", "64,64,64");
+
             if (size == "")
                 return;
+
             // -- Check if the size is valid
             if (!size.Contains(",")) {
                 MessageBox.Show("Incorrect format for map size.");
                 return;
             }
+
             string[] splits = size.Replace(" ", "").Split(new char[] { ',' });
+
             if (splits.Length != 3) {
                 MessageBox.Show("Incorrect format for map size, please provide an X,Y,Z");
                 return;
             }
+
+            maps = maps.OrderBy(o => o.mapID).ToList();
+
             // -- Next, get a unique map ID to use..
             int id = 0;
             bool broke = false;
+
             foreach (Map m in maps) {
-                if ((int.Parse(m.mapID) - id) > 1) {
+                if ((m.mapID - id) > 1) {
                     id += 1;
                     broke = true;
                     break;
@@ -295,8 +305,10 @@ namespace D3_Classicube_Gui {
                     id += 1;
                 }
             }
-            if (!broke)
-                id += 1;
+
+            //if (!broke)
+            //    id += 1;
+
             // -- Generate lua code to make the map, fill it, save it, and resend it.
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
             fileWriter.WriteLine("Map_Add(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ", \"" + name + "\")");
@@ -1278,7 +1290,7 @@ namespace D3_Classicube_Gui {
 
                 if (line.StartsWith("[") && line.Contains("]")) {
                     if (ID != "") {
-                        maps.Add(new Map(ID,name,dir,del,reload));
+                        maps.Add(new Map(int.Parse(ID),name,dir,del,reload));
                     }
                     ID = line.Substring(1, line.IndexOf("]") - 1);
                 } else if (line.Contains("=")) {
@@ -1302,7 +1314,7 @@ namespace D3_Classicube_Gui {
                 } else { continue; }
             } while (!fileReader.EndOfStream);
             fileReader.Close();
-            maps.Add(new Map(ID, name, dir, del, reload));
+            maps.Add(new Map(int.Parse(ID), name, dir, del, reload));
             lstMaps.Items.Clear();
 
             foreach (Map m in maps) {
@@ -1315,6 +1327,7 @@ namespace D3_Classicube_Gui {
             btnRegenMap.Enabled = false;
             btnRegenPrev.Enabled = false;
             btnMapRez.Enabled = false;
+            btnMapSave.Enabled = false;
         }
         private void loadMapConfig(Map map) {
             StreamReader fileReader;
@@ -1812,6 +1825,7 @@ namespace D3_Classicube_Gui {
             btnRegenMap.Enabled = true;
             btnRegenPrev.Enabled = true;
             btnMapRez.Enabled = true;
+            btnMapSave.Enabled = true;
 
             foreach (Map m in maps) {
                 if (m.mapName == (string)lstMaps.SelectedItem) {
