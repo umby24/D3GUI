@@ -648,7 +648,7 @@ namespace D3_Classicube_Gui {
         }
         // -- Players Right Click Context menu
         private void setRankToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -660,7 +660,7 @@ namespace D3_Classicube_Gui {
             fileWriter.Close();
         }
         private void kickToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -672,7 +672,7 @@ namespace D3_Classicube_Gui {
             fileWriter.Close();
         }
         private void banToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -684,7 +684,7 @@ namespace D3_Classicube_Gui {
             fileWriter.Close();
         }
         private void stopToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -696,7 +696,7 @@ namespace D3_Classicube_Gui {
             fileWriter.Close();
         }
         private void unstopToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -707,7 +707,7 @@ namespace D3_Classicube_Gui {
             fileWriter.Close();
         }
         private void muteToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -720,7 +720,7 @@ namespace D3_Classicube_Gui {
             fileWriter.Close();
         }
         private void unmuteToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (lstPlayers.SelectedItem.ToString() == "")
+            if (lstPlayers.SelectedItem == null)
                 return;
 
             string selected = lstPlayers.SelectedItem.ToString();
@@ -1602,7 +1602,20 @@ namespace D3_Classicube_Gui {
             fileWriter.WriteLine("Map_Set_Rank_Show(" + thisMap.mapID + ", " + boxVisrank.Text + ")");
             fileWriter.Close();
         }
+        private void btnMapSave_Click(object sender, EventArgs e) {
+            Map thisMap = null;
 
+            foreach (Map m in maps) {
+                if (m.mapName == (string)lstMaps.SelectedItem) {
+                    thisMap = m;
+                    break;
+                }
+            }
+
+            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Action_Add_Save(" + thisMap.mapID + ", \"" + thisMap.mapDirectory + "\")");
+            fileWriter.Close();
+        }
         #endregion
         #region Commands Tab
         private void boxCommand_TextChanged(object sender, EventArgs e) {
@@ -2070,6 +2083,8 @@ namespace D3_Classicube_Gui {
             }
         }
         #endregion
+
+
         #region Other
 
         #endregion

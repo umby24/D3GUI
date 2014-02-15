@@ -194,6 +194,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.btnMapSave = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.contextIcon.SuspendLayout();
             this.tabPage14.SuspendLayout();
@@ -930,6 +931,7 @@
             // 
             // tabPage11
             // 
+            this.tabPage11.Controls.Add(this.btnMapSave);
             this.tabPage11.Controls.Add(this.lblMapSize);
             this.tabPage11.Controls.Add(this.btnSavePreview);
             this.tabPage11.Controls.Add(this.dropMapGen);
@@ -2046,6 +2048,16 @@
             this.tabControl1.Size = new System.Drawing.Size(777, 313);
             this.tabControl1.TabIndex = 0;
             // 
+            // btnMapSave
+            // 
+            this.btnMapSave.Location = new System.Drawing.Point(134, 206);
+            this.btnMapSave.Name = "btnMapSave";
+            this.btnMapSave.Size = new System.Drawing.Size(96, 23);
+            this.btnMapSave.TabIndex = 28;
+            this.btnMapSave.Text = "Save Map";
+            this.btnMapSave.UseVisualStyleBackColor = true;
+            this.btnMapSave.Click += new System.EventHandler(this.btnMapSave_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -2272,6 +2284,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtClickDistance;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.Button btnMapSave;
     }
 }
 
