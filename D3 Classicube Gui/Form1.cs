@@ -302,7 +302,7 @@ namespace D3_Classicube_Gui {
             fileWriter.WriteLine("Map_Add(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ", \"" + name + "\")");
             fileWriter.WriteLine("Mapfill_standart(" + id.ToString() + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ")"); // -- Fill the map to flatgrass for them too :D
             fileWriter.WriteLine("Map_Action_Add_Save(" + id.ToString() + ", \"\")");
-            fileWriter.WriteLine("Map_Resend(" + id.ToString() + ")");
+            //fileWriter.WriteLine("Map_Resend(" + id.ToString() + ")");
             fileWriter.Close();
 
             loadMaps();
@@ -437,9 +437,11 @@ namespace D3_Classicube_Gui {
             fileWriter.WriteLine("Map_Action_Add_Resize(" + thisMap.mapID + ", " + splits[0] + ", " + splits[1] + ", " + splits[2] + ")");
             fileWriter.Close();
         }
+
         private void btnMapReloads_Click(object sender, EventArgs e) {
             loadMaps();
         }
+
         private void btnRegenMap_Click(object sender, EventArgs e) {
             string args = Microsoft.VisualBasic.Interaction.InputBox("Please enter any additional arguments you would like to pass to the map generator (if supported)", "Mapfill");
             Map thisMap = null;
@@ -1568,39 +1570,39 @@ namespace D3_Classicube_Gui {
         #region Worlds tab
         private void boxBuildRank_TextChanged(object sender, EventArgs e) {
             Map thisMap = null;
+
             foreach (Map m in maps) {
                 if (m.mapName == (string)lstMaps.SelectedItem) {
                     thisMap = m;
                     break;
                 }
             }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Rank_Build(" + thisMap.mapID + ", " + boxBuildRank.Text + ")");
-            fileWriter.Close();
+
+            thisMap.rankBuild = boxBuildRank.Text;
         }
         private void boxJoinRank_TextChanged(object sender, EventArgs e) {
             Map thisMap = null;
+
             foreach (Map m in maps) {
                 if (m.mapName == (string)lstMaps.SelectedItem) {
                     thisMap = m;
                     break;
                 }
             }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Rank_Join(" + thisMap.mapID + ", " + boxJoinRank.Text + ")");
-            fileWriter.Close();
+
+            thisMap.rankJoin = boxJoinRank.Text;
         }
         private void boxVisrank_TextChanged(object sender, EventArgs e) {
             Map thisMap = null;
+
             foreach (Map m in maps) {
                 if (m.mapName == (string)lstMaps.SelectedItem) {
                     thisMap = m;
                     break;
                 }
             }
-            StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
-            fileWriter.WriteLine("Map_Set_Rank_Show(" + thisMap.mapID + ", " + boxVisrank.Text + ")");
-            fileWriter.Close();
+
+            thisMap.rankShow = boxVisrank.Text;
         }
         private void btnMapSave_Click(object sender, EventArgs e) {
             Map thisMap = null;
@@ -1613,6 +1615,9 @@ namespace D3_Classicube_Gui {
             }
 
             StreamWriter fileWriter = new StreamWriter("LUA\\GUI_Control.lua");
+            fileWriter.WriteLine("Map_Set_Rank_Build(" + thisMap.mapID + ", " + boxBuildRank.Text + ")");
+            fileWriter.WriteLine("Map_Set_Rank_Join(" + thisMap.mapID + ", " + boxJoinRank.Text + ")");
+            fileWriter.WriteLine("Map_Set_Rank_Show(" + thisMap.mapID + ", " + boxVisrank.Text + ")");
             fileWriter.WriteLine("Map_Action_Add_Save(" + thisMap.mapID + ", \"" + thisMap.mapDirectory + "\")");
             fileWriter.Close();
         }
