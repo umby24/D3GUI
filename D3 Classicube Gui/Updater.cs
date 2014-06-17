@@ -11,7 +11,7 @@ namespace D3_Classicube_Gui {
         string updateUrl = "http://umby.d3s.co/CCD3/gui";
         string fileUrl = "http://umby.d3s.co/CCD3/";
         string serverUrl = "http://umby.d3s.co/CCD3/server";
-        string thisVersion = "1.0.13";
+        string thisVersion = "1.0.14";
         string serverVersion = "";
         string thisServer = "";
         public Form1 mainForm;

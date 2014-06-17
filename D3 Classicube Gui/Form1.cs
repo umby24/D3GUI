@@ -780,7 +780,7 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Client.pbi":
-                    if ((parts[2].Replace(" ", "") == "88" || parts[2].Replace(" ", "") == "177") && cSettings[4] == true) {
+                    if ((parts[2].Replace(" ", "") == "86" || parts[2].Replace(" ", "") == "175") && cSettings[4] == true) {
                         string name = parts[3].Substring(parts[3].IndexOf("'") + 1, parts[3].IndexOf("'",parts[3].IndexOf("'") + 1) - (parts[3].IndexOf("'") + 1));
 
                         if (parts[3].Contains("logged in")) {
