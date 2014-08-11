@@ -1,70 +1,77 @@
-﻿using System;
+﻿// -- For GZip
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.IO.Compression; // -- For GZip
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
 
-namespace D3_ISO_Viewer {
-    class D3_Map {
+namespace D3_Classicube_Gui {
+    class D3Map {
         // -- D3 V1.0+ Map reader
         // -- Map size, spawn coords, and so on are stored in 'Config.txt'.
         // -- Actual block data is stored in Data-Layer.gz, which is in the format [byte]BlockID [byte]Metadata [short]Player 
 
-        int Size_X;
-        int Size_Y;
-        int Size_Z; // -- Because this is just an image generator, I will not be needing all the info in config.txt
-        string heightmaptime = "";
-        public string time2d = "";
-        public string time3d = "";
-        public byte[] mapData;
-        byte[,] heightMap;
+        int _sizeX;
+        int _sizeY;
+        int _sizeZ; // -- Because this is just an image generator, I will not be needing all the info in config.txt
+        private string _heightmaptime = "";
+        public string Time2D = "";
+        public string Time3D = "";
+        public byte[] MapData;
+        byte[,] _heightMap;
 
-        public Image generatedImage;
-        Dictionary<byte, Color> colortable;
+        public Image GeneratedImage;
+        Dictionary<byte, Color> _colortable;
 
-        public void readConfig(string fileName) {
-            StreamReader fileReader = new StreamReader(fileName);
+        public string Heightmaptime
+        {
+            get { return _heightmaptime; }
+            set { _heightmaptime = value; }
+        }
+
+        public void ReadConfig(string fileName) {
+            var fileReader = new StreamReader(fileName);
 
             do {
-                string line = fileReader.ReadLine();
+                var line = fileReader.ReadLine();
 
-                if (!line.Contains("="))
+                if (line != null && !line.Contains("="))
                     continue;
-                string setting = line.Substring(0, line.IndexOf("=") - 1);
-                string value = line.Substring(line.IndexOf("=") + 2, line.Length - (line.IndexOf("=") + 2));
+
+                if (line == null) 
+                    continue;
+
+                var setting = line.Substring(0, line.IndexOf("=") - 1);
+                var value = line.Substring(line.IndexOf("=") + 2, line.Length - (line.IndexOf("=") + 2));
 
                 switch (setting) {
                     case "Size_X":
-                        Size_X = int.Parse(value);
+                        _sizeX = int.Parse(value);
                         break;
                     case "Size_Y":
-                        Size_Y = int.Parse(value);
+                        _sizeY = int.Parse(value);
                         break;
                     case "Size_Z":
-                        Size_Z = int.Parse(value);
+                        _sizeZ = int.Parse(value);
                         break;
                     default:
                         continue;
                 }
-               
             } while (!fileReader.EndOfStream);
             fileReader.Close();
         }
-        public void unzip(string filename) {
+
+        public void Unzip(string filename) {
             // -- UnGZips our file, and loads it to memory.
-            Stream mystream;
-            FileStream infile = new FileStream(filename, FileMode.Open);
+            var infile = new FileStream(filename, FileMode.Open);
 
-            mystream = new GZipStream(infile, CompressionMode.Decompress);
+            Stream mystream = new GZipStream(infile, CompressionMode.Decompress);
 
-            MemoryStream output = new MemoryStream();
+            var output = new MemoryStream();
 
-            byte[] buffer = new byte[1024];
+            var buffer = new byte[1024];
             while (true) {
-                int readbytes = mystream.Read(buffer, 0, 1024);
+                var readbytes = mystream.Read(buffer, 0, 1024);
 
                 if (readbytes == 0)
                     break;
@@ -72,70 +79,75 @@ namespace D3_ISO_Viewer {
                 output.Write(buffer, 0, readbytes);
             }
             mystream.Close();
-            mapData = output.ToArray();
+            MapData = output.ToArray();
             output.Close();
 
         }
-        public int getBlockID(int x, int y, int z) {
-            if ((x >= 0 && y >= 0 && z >= 0) && (Size_X > x && Size_Y > y && Size_Z > z)) {
-                int index = (z * Size_Y + y) * Size_X + x; // -- (Y * Size_Z + Z) * Size_X + x
-                return mapData[(index * 4)];
-            } else {
-                return 1;
+        public int GetBlockId(int x, int y, int z)
+        {
+            if ((x >= 0 && y >= 0 && z >= 0) && (_sizeX > x && _sizeY > y && _sizeZ > z)) {
+                var index = (z * _sizeY + y) * _sizeX + x; // -- (Y * Size_Z + Z) * Size_X + x
+                return MapData[(index * 4)];
             }
+            return 1;
         }
+
         public void generate_Heightmap() {
             // -- Used for shadows, and for 2D images.
             // -- Start at the highest Z value, and work your way down until you hit a block. For each column.
-            DateTime mytime = DateTime.Now;
+            var mytime = DateTime.Now;
 
-            heightMap = new byte[Size_X, Size_Y];
+            _heightMap = new byte[_sizeX, _sizeY];
 
-            for (int ix = 0; ix < Size_X; ix++) {
-                for (int iy = 0; iy < Size_Y; iy++) {
-                    for (int iz = (Size_Z - 1); iz > -1; iz--) {
-                        int blockID = getBlockID(ix, iy, iz);
+            for (var ix = 0; ix < _sizeX; ix++) {
+                for (var iy = 0; iy < _sizeY; iy++) {
+                    for (var iz = (_sizeZ - 1); iz > -1; iz--) {
+                        var blockId = GetBlockId(ix, iy, iz);
                         if (ix == 63) {
                             ix = 63;
                         }
-                        if (blockID != 0) {
+                        if (blockId != 0) {
                             // -- Found something, plot it.
-                            heightMap[ix, iy] = (byte)blockID;
+                            _heightMap[ix, iy] = (byte)blockId;
                             break;
                         }
                     }
                 }
             }
-            DateTime done = DateTime.Now;
-            heightmaptime = (done.TimeOfDay - mytime.TimeOfDay).ToString();
+            var done = DateTime.Now;
+            Heightmaptime = (done.TimeOfDay - mytime.TimeOfDay).ToString();
         }
-        public void loadBlockColors(string blocktext) {
+        public void LoadBlockColors(string blocktext) {
             // -- Load block colors from Block.txt, into a dictionary!
-            colortable = new Dictionary<byte, Color>();
-            StreamReader fileReader = new StreamReader(blocktext);
-            string blockid = "";
-            Color blockColor = Color.Transparent;
+            _colortable = new Dictionary<byte, Color>();
+            var fileReader = new StreamReader(blocktext);
+            var blockid = "";
+            var blockColor = Color.Transparent;
 
             do {
-                string line = fileReader.ReadLine();
+                var line = fileReader.ReadLine();
 
-                if (line.Contains("[") && line.Contains("]")) {
+                if (line != null && (line.Contains("[") && line.Contains("]"))) {
                     if (blockid != "")
-                        colortable.Add((byte)int.Parse(blockid), blockColor);
+                        _colortable.Add((byte)int.Parse(blockid), blockColor);
 
                     blockid = line.Substring(1, line.Length - 2);
                     blockColor = Color.Transparent;
                     continue;
                 }
-                if (!line.Contains("="))
+                if (line != null && !line.Contains("="))
                     continue;
-                string setting = line.Substring(0, line.IndexOf("=") - 1);
-                string value = line.Substring(line.IndexOf("=") + 2, line.Length - (line.IndexOf("=") + 2));
+
+                if (line == null) 
+                    continue;
+
+                var setting = line.Substring(0, line.IndexOf("=") - 1);
+                var value = line.Substring(line.IndexOf("=") + 2, line.Length - (line.IndexOf("=") + 2));
                 
                 switch (setting) {
                     case "Color_Overview":
                         if (value != "-1") {
-                            string hexValue = int.Parse(value).ToString("X"); // Swap last, with the center.
+                            var hexValue = int.Parse(value).ToString("X"); // Swap last, with the center.
                             hexValue = hexValue.PadLeft(6, '0');
                             hexValue = hexValue.Substring(4, 2) + hexValue.Substring(2, 2) + hexValue.Substring(0, 2);
 
@@ -145,91 +157,72 @@ namespace D3_ISO_Viewer {
                     default:
                         continue;
                 }
-
             } while (!fileReader.EndOfStream);
             fileReader.Close();
         }
         public void generate_2D() {
-            DateTime Start = DateTime.Now;
-            Bitmap thismap = new Bitmap(Size_X * 4, Size_Y * 4);
-            Graphics thisg = Graphics.FromImage((Image)thismap);
-            int timex = 0;
-            int timey = 0;
-            for (int x = 0; x <= (Size_X - 1); x++) {
-                for (int y = 0; y <= (Size_Y - 1); y++) {
-                    thisg.FillRectangle(new SolidBrush(colortable[heightMap[x,y]]),new Rectangle(x + timex, y + timey,6,6));
+            var start = DateTime.Now;
+            var thismap = new Bitmap(_sizeX * 4, _sizeY * 4);
+            var thisg = Graphics.FromImage(thismap);
+            var timex = 0;
+            var timey = 0;
+            for (var x = 0; x <= (_sizeX - 1); x++) {
+                for (var y = 0; y <= (_sizeY - 1); y++) {
+                    thisg.FillRectangle(new SolidBrush(_colortable[_heightMap[x,y]]),new Rectangle(x + timex, y + timey,6,6));
                     timey += 3;
                 }
                 timex += 3;
                 timey = 0;
             }
-            DateTime Finish = DateTime.Now;
-            time2d = (Finish.TimeOfDay - Start.TimeOfDay).ToString();
-            generatedImage = (Image)thismap;
+            var finish = DateTime.Now;
+            Time2D = (finish.TimeOfDay - start.TimeOfDay).ToString();
+            GeneratedImage = thismap;
         }
-        public void generate_Isomap() {
-            for (int ix = 0; ix <= (Size_X - 1); ix++) {
-                for (int iy = 0; iy <= (Size_Y - 1); iy++) {
-                    for (int iz = 0; iz <= (Size_Z - 1); iz++) {
-                        //if (getBlockID(
-                    }
-                }
-            }
-        }
-        public bool render(int x, int y, int z) {
-            if (x == Size_X - 1 || y == Size_Y - 1)
+
+        public bool Render(int x, int y, int z) {
+            if (x == _sizeX - 1 || y == _sizeY - 1)
                 return true;
 
-            if (getBlockID(x + 1, y, z) != 0 && getBlockID(x, y + 1, z) != 0 && getBlockID(x, y, z + 1) != 0 && getBlockID(x - 1, y, z) != 0 && getBlockID(x, y - 1, z) != 0 && getBlockID(x, y, z - 1) != 0 && getBlockID(x + 1, y, z + 1) != 0 && getBlockID(x - 1, y, z - 1) != 0 && getBlockID(x, y + 1, z + 1) != 0 && getBlockID(x, y - 1, z - 1) != 0) {
-                return false;
-            } else {
-                return true;
-            }
+            return GetBlockId(x + 1, y, z) == 0 || GetBlockId(x, y + 1, z) == 0 || GetBlockId(x, y, z + 1) == 0 || GetBlockId(x - 1, y, z) == 0 || GetBlockId(x, y - 1, z) == 0 || GetBlockId(x, y, z - 1) == 0 || GetBlockId(x + 1, y, z + 1) == 0 || GetBlockId(x - 1, y, z - 1) == 0 || GetBlockId(x, y + 1, z + 1) == 0 || GetBlockId(x, y - 1, z - 1) == 0;
         }
 
         public void generate_iso() {
-            DateTime Start = DateTime.Now;
+            var start = DateTime.Now;
             // X = ix * chunk_size
             // X,Y,Z = ChunkSize, CHunksize, Size_Z
             // Draw_Chunk(X, Y, #Chunk_Size, #Chunk_Size, Map_Data\Size_Z)
-            Bitmap mybitmap = new Bitmap((Size_X + Size_Y), (Size_X + Size_Y + Size_Z));
-            Graphics thisg = Graphics.FromImage((Image)mybitmap);
-            int timex = 0;
-            int timey = 0;
+            var mybitmap = new Bitmap((_sizeX + _sizeY), (_sizeX + _sizeY + _sizeZ));
+            Graphics.FromImage((Image)mybitmap);
 
-            for (int ix = 0; ix < Size_X; ix++) {
-                int X = ix;
-                for (int iy = 0; iy < Size_Y; iy++) {
-                    int Y = iy;
-                    for (int iz = 0; iz < Size_Z; iz++) {
-                        int Z = iz;
-                        if (render(ix, iy, iz) == false)
+            for (var ix = 0; ix < _sizeX; ix++) {
+                var x = ix;
+                for (var iy = 0; iy < _sizeY; iy++) {
+                    var y = iy;
+                    for (var iz = 0; iz < _sizeZ; iz++) {
+                        var z = iz;
+                        if (Render(ix, iy, iz) == false)
                             continue;
-                        int Image_X = (Size_Y + ix - iy);
-                        int Image_Y = (Size_Z + iy + ix - iz);
+                        var imageX = (_sizeY + ix - iy);
+                        var imageY = (_sizeZ + iy + ix - iz);
                         
-                        if (X >= 0 && X < Size_X && Y >= 0 && Y < Size_Y && Z >= 0 && Z < Size_Z) {
-                            int block = getBlockID(X, Y, Z);
+                        if (x >= 0 && x < _sizeX && y >= 0 && y < _sizeY && z >= 0 && z < _sizeZ) {
+                            var block = GetBlockId(x, y, z);
                            
-                            Color blockColor = colortable[(byte)block];
+                            var blockColor = _colortable[(byte)block];
                             if (blockColor != Color.Transparent) {
                                 //blockColor = Color_Darken(blockColor,));
-                                mybitmap.SetPixel(Image_X, Image_Y, Color_Darken(blockColor, (float)0.5));
-                                mybitmap.SetPixel(Image_X - 1, Image_Y + 1, Color_Darken(blockColor, (float).7));
-                                mybitmap.SetPixel(Image_X, Image_Y + 1, blockColor);
+                                mybitmap.SetPixel(imageX, imageY, Color_Darken(blockColor, (float)0.5));
+                                mybitmap.SetPixel(imageX - 1, imageY + 1, Color_Darken(blockColor, (float).7));
+                                mybitmap.SetPixel(imageX, imageY + 1, blockColor);
                                // thisg.FillRectangle(new SolidBrush(Color_Darken(blockColor,(float)0.5)), new Rectangle((Image_X + timex), (Image_Y + timey), 6, 6));
                             }
                         }
                     }
-                    timey += 6;
-                    
                 }
-                timex += 6;
-                timey = 0;
             }
-            DateTime done = DateTime.Now;
-            time3d = (done.TimeOfDay - Start.TimeOfDay).ToString();
-            generatedImage = (Image)mybitmap;
+            var done = DateTime.Now;
+            Time3D = (done.TimeOfDay - start.TimeOfDay).ToString();
+            GeneratedImage = mybitmap;
         }
         public Color Color_Darken(Color color, float factor) {
             return Color.FromArgb((int)(color.R * factor), (int)(color.G * factor), (int)(color.B * factor));

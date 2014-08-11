@@ -1,50 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace D3_Classicube_Gui {
+﻿namespace D3_Classicube_Gui {
     class Block {
-        public string internalID;
-        public string blockName;
-        public string clientID;
-        public string physic;
-        public string physicPlugin;
-        public string doTime;
-        public string doTimeRandom;
-        public string doRepeat;
-        public string dobyLoad;
-        public string createPlugin;
-        public string delPlugin;
-        public string rankPlace;
-        public string rankDelete;
-        public string afterDelete;
-        public string killer;
-        public string special;
-        public string overviewColor;
-        public string RBL;
-        public string CPE_Replace;
-        public string CPE_Level;
+        public string InternalId;
+        public string BlockName;
+        public string ClientId;
+        public string Physic;
+        public string PhysicPlugin;
+        public string DoTime;
+        public string DoTimeRandom;
+        public string DoRepeat;
+        public string DobyLoad;
+        public string CreatePlugin;
+        public string DelPlugin;
+        public string RankPlace;
+        public string RankDelete;
+        public string AfterDelete;
+        public string Killer;
+        public string Special;
+        public string OverviewColor;
+        public string Rbl;
+        public string CpeReplace;
+        public string CpeLevel;
 
-        public Block(string IID, string bname, string cid, string physics, string pPlug, string dtime, string dtrand, string drep, string dload, string cplug, string dplug, string rplace, string rdel, string adel, string kill, string spec, string overview) {
-            internalID = IID;
-            blockName = bname;
-            clientID = cid;
-            physic = physics;
-            physicPlugin = pPlug;
-            doTime = dtime;
-            doTimeRandom = dtrand;
-            doRepeat = drep;
-            dobyLoad = dload;
-            createPlugin = cplug;
-            delPlugin = dplug;
-            rankPlace = rplace;
-            rankDelete = rdel;
-            afterDelete = adel;
-            killer = kill;
-            special = spec;
-            overviewColor = overview;
+        public Block(string iid, string bname, string cid, string physics, string pPlug, string dtime, string dtrand, string drep, string dload, string cplug, string dplug, string rplace, string rdel, string adel, string kill, string spec, string overview) {
+            InternalId = iid;
+            BlockName = bname;
+            ClientId = cid;
+            Physic = physics;
+            PhysicPlugin = pPlug;
+            DoTime = dtime;
+            DoTimeRandom = dtrand;
+            DoRepeat = drep;
+            DobyLoad = dload;
+            CreatePlugin = cplug;
+            DelPlugin = dplug;
+            RankPlace = rplace;
+            RankDelete = rdel;
+            AfterDelete = adel;
+            Killer = kill;
+            Special = spec;
+            OverviewColor = overview;
         }
     }
 }

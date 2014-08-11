@@ -1,5 +1,8 @@
-﻿namespace D3_Classicube_Gui {
-    partial class timedMessages {
+﻿using System.IO;
+using System.Windows.Forms;
+
+namespace D3_Classicube_Gui {
+    partial class TimedMessages {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -23,7 +26,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(timedMessages));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TimedMessages));
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -44,7 +47,7 @@
             this.ClientSize = new System.Drawing.Size(374, 261);
             this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "timedMessages";
+            this.Name = "TimedMessages";
             this.Text = "File Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
             this.Load += new System.EventHandler(this.timedMessages_Load);
@@ -56,5 +59,11 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBox1;
+
+        private void formClosing(object sender, FormClosingEventArgs e) {
+            var fileWriter = new StreamWriter(File);
+            fileWriter.Write(textBox1.Text);
+            fileWriter.Close();
+        }
     }
 }

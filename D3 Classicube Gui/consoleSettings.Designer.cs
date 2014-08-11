@@ -1,5 +1,5 @@
 ﻿namespace D3_Classicube_Gui {
-    partial class consoleSettings {
+    partial class ConsoleSettings {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(consoleSettings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConsoleSettings));
             this.btnDone = new System.Windows.Forms.Button();
             this.chkHeartbeat = new System.Windows.Forms.CheckBox();
             this.chkChat = new System.Windows.Forms.CheckBox();
@@ -114,7 +114,7 @@
             this.chkTimes.Text = "Timestamps";
             this.chkTimes.UseVisualStyleBackColor = true;
             // 
-            // consoleSettings
+            // ConsoleSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -130,8 +130,9 @@
             this.Controls.Add(this.btnDone);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "consoleSettings";
+            this.Name = "ConsoleSettings";
             this.Text = "Filtered Console Settings";
+            this.Load += new System.EventHandler(this.ConsoleSettings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

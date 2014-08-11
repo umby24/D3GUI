@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace D3_Classicube_Gui {
+﻿namespace D3_Classicube_Gui {
     class Rank {
-        public string number;
-        public string name;
-        public string prefix;
-        public string suffix;
-        public string onclient;
+        public string Number;
+        public string Name;
+        public string Prefix;
+        public string Suffix;
+        public string Onclient;
 
-        public Rank(string rank, string Name, string Prefix, string Suffix, string onClient = "0") {
-            number = rank;
-            name = Name;
-            prefix = Prefix;
-            suffix = Suffix;
-            onclient = onClient;
+        public Rank(string rank, string name, string prefix, string suffix, string onClient = "0") {
+            Number = rank;
+            Name = name;
+            Prefix = prefix;
+            Suffix = suffix;
+            Onclient = onClient;
         }
     }
 }
