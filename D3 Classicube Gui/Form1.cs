@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
@@ -750,37 +746,49 @@ namespace D3_Classicube_Gui {
         private void filterMessage(string message) {
             if (message == null)
                 return;
-            string[] parts = message.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+
+            string[] parts = message.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+
             if (!(parts.Length > 1))
                 return;
-            switch (parts[1].Replace(" ", "")) {
+
+            boxConsole.Text += parts[2] + ": " + parts[3] + Environment.NewLine;
+            boxConsole.Select(boxConsole.Text.Length, boxConsole.Text.Length);
+            boxConsole.ScrollToCaret();
+
+            
+            switch (parts[0].Replace(" ", "")) {
                 case "Chat.pbi":
-                    if ((parts[2].Replace(" ", "") == "41"  || parts[2].Replace(" ","") == "86") && cSettings[1] == true) {
-                        putMessage(parts[3].Replace(" Chat: ", ""));
+                    if ((parts[1].Replace(" ", "") == "37"  || parts[1].Replace(" ","") == "82") && cSettings[1]) {
+                        putMessage(parts[3]);
                     }
                     break;
                 case "Heartbeat.pb":
-                    if (cSettings[0] == true) {
+                    if (cSettings[0]) {
                         putMessage("Heartbeat Sent.");
                     }
+
                     lastHeartbeat = DateTime.Now.Hour.ToString().PadLeft(2,'0') + ":" + DateTime.Now.Minute.ToString().PadLeft(2,'0') + ":" + DateTime.Now.Second.ToString().PadLeft(2,'0');
                     lblHeartbeat.Text = "Last Heartbeat: " + lastHeartbeat;
-                    if (mini == true) {
+
+                    if (mini) {
                         mf.lblHeartbeat.Text = lastHeartbeat;
                     }
                     break;
                 case "Map.pbi":
-                    if (parts[2].Replace(" ", "") == "731" && cSettings[3] == true) {
-                        putMessage(parts[3].Replace(" Map: ", ""));
+                    if (parts[1].Replace(" ", "") == "740" && cSettings[3]) {
+                        putMessage(parts[3]);
                     }
+
                     break;
                 case "Command.pbi":
-                    if (parts[2].Replace(" ", "") == "2263" && cSettings[2] == true) {
-                        putMessage(parts[3].Replace(" Command: ", ""));
+                    if (parts[1].Replace(" ", "") == "2230" && cSettings[2]) {
+                        putMessage(parts[3]);
                     }
+
                     break;
                 case "Client.pbi":
-                    if ((parts[2].Replace(" ", "") == "86" || parts[2].Replace(" ", "") == "175") && cSettings[4] == true) {
+                    if ((parts[1].Replace(" ", "") == "89" || parts[1].Replace(" ", "") == "178") && cSettings[4]) {
                         string name = parts[3].Substring(parts[3].IndexOf("'") + 1, parts[3].IndexOf("'",parts[3].IndexOf("'") + 1) - (parts[3].IndexOf("'") + 1));
 
                         if (parts[3].Contains("logged in")) {
@@ -796,22 +804,23 @@ namespace D3_Classicube_Gui {
                                 online -= 1;
                             }
                         }
-                        lblPlayers.Text = "Players: " + lstPlayers.Items.Count.ToString();
+                        lblPlayers.Text = "Players: " + lstPlayers.Items.Count;
+
                         if (mini) {
                             mf.lblOnline.Text = online + "/" + maxPlayers;
                         }
                     }
                     break;
                 case "Network.pbi":
-                    if (parts[2].Replace(" ", "") == "83") {
+                    if (parts[1].Replace(" ", "") == "84") {
                         putMessage("WARNING: Unable to start server networking! Make sure there are no port conflicts.");
                     }
-                    if (parts[2].Replace(" ", "") == "234") {
+                    if (parts[1].Replace(" ", "") == "234") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         tempEID = Entity_ID.Replace(" ","");
                     }
-                    if (parts[2].Replace(" ", "") == "251") {
+                    if (parts[1].Replace(" ", "") == "251") {
                         string Entity_ID = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         Entity_ID = Entity_ID.Substring(0, Entity_ID.IndexOf(","));
                         lstPlayers.Items.Remove(tempEID + ":" + Entity_ID); // -- Fixed bug
@@ -820,7 +829,7 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Lua.pbi":
-                    if (cSettings[5] == true) {
+                    if (cSettings[5]) {
                         putMessage("");
                         putMessage("LUA: " + parts[3]);
                         putMessage("");
@@ -1430,9 +1439,7 @@ namespace D3_Classicube_Gui {
                 this.Invoke(new p_handleMessage(handleMessage), sender, args);
                 return;
             }
-            boxConsole.Text += args.Data + Environment.NewLine;
-            boxConsole.Select(boxConsole.Text.Length, boxConsole.Text.Length);
-            boxConsole.ScrollToCaret();
+
             filterMessage(args.Data);
         }
         private void putMessage(string message) {
@@ -1534,9 +1541,9 @@ namespace D3_Classicube_Gui {
 
             // -- Check for updates
             Updater ud = new Updater();
-            ud.mainForm = this;
-            ud.checkUpdates();
-            ud.checkUpdatesServer(serverVersion);
+            ud.MainForm = this;
+            ud.CheckUpdates();
+            ud.CheckUpdatesServer(serverVersion);
         }
         private void Form1_Closing(object sender, FormClosingEventArgs e) {
             try {

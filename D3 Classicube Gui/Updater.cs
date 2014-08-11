@@ -8,93 +8,97 @@ using System.Windows.Forms;
 
 namespace D3_Classicube_Gui {
     class Updater {
-        string updateUrl = "http://umby.d3s.co/CCD3/gui";
-        string fileUrl = "http://umby.d3s.co/CCD3/";
-        string serverUrl = "http://umby.d3s.co/CCD3/server";
-        string thisVersion = "1.0.14";
-        string serverVersion = "";
-        string thisServer = "";
-        public Form1 mainForm;
+        private const string UpdateUrl = "http://umby.d3s.co/CCD3/gui";
+        private const string FileUrl = "http://umby.d3s.co/CCD3/";
+        private const string ServerUrl = "http://umby.d3s.co/CCD3/server";
+        private const string ThisVersion = "1.0.15";
+        string _serverVersion = "";
+        string _thisServer = "";
+        public Form1 MainForm;
 
-        public string getVersion() {
+        public string GetVersion() {
             // -- Returns the most up-to-date version of the GUI.
-            WebClient check = new WebClient();
-            string version = check.DownloadString(updateUrl);
+            var check = new WebClient();
+            string version = check.DownloadString(UpdateUrl);
             version = version.Replace("\n", "");
             return version;
         }
-        public void checkUpdates() {
-            serverVersion = getVersion();
-            if (serverVersion != thisVersion) {
-                DialogResult b = MessageBox.Show("There is an update available! Would you like to download?", "Update", MessageBoxButtons.YesNo);
-                if (b == DialogResult.Yes) {
-                    MessageBox.Show("The update will now download in the background. Progress will be shown.", "Update");
-                    doUpdate();
-                }
-            }
+        public void CheckUpdates() {
+            _serverVersion = GetVersion();
+
+            if (_serverVersion == ThisVersion) 
+                return;
+
+            var b = MessageBox.Show("There is an update available! Would you like to download?", "Update", MessageBoxButtons.YesNo);
+
+            if (b != DialogResult.Yes) 
+                return;
+
+            MessageBox.Show("The update will now download in the background. Progress will be shown.", "Update");
+            doUpdate();
         }
         public void doUpdate() {
-            WebClient downloader = new WebClient();
+            var downloader = new WebClient();
             downloader.DownloadProgressChanged += downloader_DownloadProgressChanged;
             downloader.DownloadFileCompleted += downloader_DownloadFileCompleted;
 
-            UriBuilder ub = new UriBuilder(fileUrl + serverVersion + ".exe");
-            downloader.DownloadFileAsync(ub.Uri, serverVersion + " Gui.exe");
+            var ub = new UriBuilder(FileUrl + _serverVersion + ".exe");
+            downloader.DownloadFileAsync(ub.Uri, _serverVersion + " Gui.exe");
             
         }
 
         void downloader_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e) {
-            mainForm.updateProgress.Visible = false;
-            MessageBox.Show("Update complete, filename is " + serverVersion + " Gui.exe", "Update");
+            MainForm.updateProgress.Visible = false;
+            MessageBox.Show("Update complete, filename is " + _serverVersion + " Gui.exe", "Update");
         }
 
         void downloader_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
-            mainForm.updateProgress.Visible = true;
-            mainForm.updateProgress.Value = e.ProgressPercentage;
+            MainForm.updateProgress.Visible = true;
+            MainForm.updateProgress.Value = e.ProgressPercentage;
         }
 
         #region Server Updater
-        public string getVersionServer() {
+        public string GetVersionServer() {
             // -- Returns the most up-to-date version of the GUI.
-            WebClient check = new WebClient();
-            string version = check.DownloadString(serverUrl);
+            var check = new WebClient();
+            string version = check.DownloadString(ServerUrl);
             version = version.Replace("\n", "");
             return version;
         }
-        public void checkUpdatesServer(string server) {
-            thisServer = server;
-            serverVersion = getVersionServer();
-            if (server != serverVersion) {
+        public void CheckUpdatesServer(string server) {
+            _thisServer = server;
+            _serverVersion = GetVersionServer();
+            if (server != _serverVersion) {
                 DialogResult b = MessageBox.Show("There is an updated server available! Would you like to download?", "Update", MessageBoxButtons.YesNo);
                 if (b == DialogResult.Yes) {
                     MessageBox.Show("The update will now download in the background. Progress will be shown. Please do not start server.", "Update");
-                    doUpdateServer();
+                    DoUpdateServer();
                 }
             }
         }
-        public void doUpdateServer() {
+        public void DoUpdateServer() {
             WebClient downloader = new WebClient();
             downloader.DownloadProgressChanged += downloader_DownloadProgressChanged_Server;
             downloader.DownloadFileCompleted += downloader_DownloadFileCompleted_Server;
 
-            UriBuilder ub = new UriBuilder(fileUrl + thisServer + ".exe");
-            downloader.DownloadFileAsync(ub.Uri, thisServer + "_Server.exe");
+            UriBuilder ub = new UriBuilder(FileUrl + _thisServer + ".exe");
+            downloader.DownloadFileAsync(ub.Uri, _thisServer + "_Server.exe");
 
-            mainForm.serverVersion = thisServer;
-            mainForm.saveSettings();
+            MainForm.serverVersion = _thisServer;
+            MainForm.saveSettings();
         }
 
         void downloader_DownloadFileCompleted_Server(object sender, System.ComponentModel.AsyncCompletedEventArgs e) {
-            mainForm.updateProgress.Visible = false;
+            MainForm.updateProgress.Visible = false;
 
             System.IO.File.Delete("Minecraft-Server.x86.exe");
-            System.IO.File.Move(thisServer + "_Server.exe", "Minecraft-Server.x86.exe");
+            System.IO.File.Move(_thisServer + "_Server.exe", "Minecraft-Server.x86.exe");
             MessageBox.Show("Update complete, You may now start your server.\n\nNOTE: You may need to download additional files for the server to fully function!\n\nVisit the website news section for details.", "Update");
         }
 
         void downloader_DownloadProgressChanged_Server(object sender, DownloadProgressChangedEventArgs e) {
-            mainForm.updateProgress.Visible = true;
-            mainForm.updateProgress.Value = e.ProgressPercentage;
+            MainForm.updateProgress.Visible = true;
+            MainForm.updateProgress.Value = e.ProgressPercentage;
         }
         #endregion
     }
