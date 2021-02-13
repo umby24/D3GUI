@@ -794,7 +794,7 @@ namespace D3_Classicube_Gui {
 
             var parts = message.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (!(parts.Length > 1))
+            if (!(parts.Length > 3))
                 return;
 
             boxConsole.Text += parts[2] + ": " + parts[3] + Environment.NewLine;
@@ -804,7 +804,7 @@ namespace D3_Classicube_Gui {
             
             switch (parts[0].Replace(" ", "")) {
                 case "Chat.pbi":
-                    if ((parts[1].Replace(" ", "") == "37"  || parts[1].Replace(" ","") == "82") && CSettings[1]) {
+                    if ((parts[1].Replace(" ", "") == "45"  || parts[1].Replace(" ","") == "75") && CSettings[1]) {
                         PutMessage(parts[3]);
                     }
                     break;
@@ -821,19 +821,19 @@ namespace D3_Classicube_Gui {
                     }
                     break;
                 case "Map.pbi":
-                    if (parts[1].Replace(" ", "") == "740" && CSettings[3]) {
+                    if (parts[1].Replace(" ", "") == "748" && CSettings[3]) { // 
                         PutMessage(parts[3]);
                     }
 
                     break;
                 case "Command.pbi":
-                    if (parts[1].Replace(" ", "") == "2230" && CSettings[2]) {
+                    if (parts[1].Replace(" ", "") == "2225" && CSettings[2]) {
                         PutMessage(parts[3]);
                     }
 
                     break;
                 case "Client.pbi":
-                    if ((parts[1].Replace(" ", "") == "89" || parts[1].Replace(" ", "") == "178") && CSettings[4]) {
+                    if ((parts[1].Replace(" ", "") == "114" || parts[1].Replace(" ", "") == "164") && CSettings[4]) {
                         var name = parts[3].Substring(parts[3].IndexOf("'") + 1, parts[3].IndexOf("'",parts[3].IndexOf("'") + 1) - (parts[3].IndexOf("'") + 1));
 
                         if (parts[3].Contains("logged in")) {
@@ -860,12 +860,12 @@ namespace D3_Classicube_Gui {
                     if (parts[1].Replace(" ", "") == "84") {
                         PutMessage("WARNING: Unable to start server networking! Make sure there are no port conflicts.");
                     }
-                    if (parts[1].Replace(" ", "") == "234") {
+                    if (parts[1].Replace(" ", "") == "235") {
                         var entityId = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         entityId = entityId.Substring(0, entityId.IndexOf(","));
                         _tempEid = entityId.Replace(" ","");
                     }
-                    if (parts[1].Replace(" ", "") == "251") {
+                    if (parts[1].Replace(" ", "") == "252") {
                         var entityId = parts[3].Substring(parts[3].IndexOf("ID:") + 3, parts[3].Length - (parts[3].IndexOf("ID:") + 3));
                         entityId = entityId.Substring(0, entityId.IndexOf(","));
                         lstPlayers.Items.Remove(_tempEid + ":" + entityId); // -- Fixed bug
@@ -1581,9 +1581,9 @@ namespace D3_Classicube_Gui {
             _serverProc.OutputDataReceived += HandleMessage;
 
             // -- Check for updates
-            var ud = new Updater {MainForm = this};
-            ud.CheckUpdates();
-            ud.CheckUpdatesServer(ServerVersion);
+            //var ud = new Updater {MainForm = this};
+            //ud.CheckUpdates();
+            //ud.CheckUpdatesServer(ServerVersion);
         }
         private void Form1_Closing(object sender, FormClosingEventArgs e) {
             try {
